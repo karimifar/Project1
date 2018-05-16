@@ -1,4 +1,5 @@
 # Project1
-Tyler Whitson
+Em Karimifar
 Andrew Berndt
 Yuechang Mei (Erin)
+Tyler Whitson
