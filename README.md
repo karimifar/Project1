@@ -1,2 +1,3 @@
 # Project1
-Yuechang (Erin) Mei
+Andrew Berndt
+Yuechang Mei (Erin)
