@@ -3,7 +3,7 @@
 <head>
     <title>Choose your restaurants</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
@@ -40,7 +40,7 @@
                                     <input type="text" class="form-control" id="foodType" placeholder="BBQ">
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" id="submit-btn" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -124,5 +124,58 @@
 
 
     </div>
+
+    <script>
+        $("#submit-btn").on("click", function(){
+        var restArray = [];
+        event.preventDefault();
+        var userZip = $("#zipCode").val()
+        
+        var foodType= $("#foodType").val()
+        $.ajax({
+        url: "http://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
+        method: "GET"
+        }).then(function(response){
+            console.log(response)
+          
+            var lat = response.results[0].geometry.location.lat;
+            var lng = response.results[0].geometry.location.lng;
+            console.log(lat,lng);
+            
+            var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
+            var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=2&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+            $.ajax({
+            url: queryURL,
+            method: "GET",
+            }).then(function(response) {
+              console.log(response.restaurants)
+              restArray= response.restaurants;
+              return restArray;
+            });
+            var index1 = Math.floor(Math.random()* restArray.length)
+              var randomRest = restArray[index1];
+              console.log(randomRest)
+
+              console.log(index1)
+              
+              var newArray= restArray.splice(index1, 1);
+              console.log(newArray)
+   
+              // var index2 = Math.floor(Math.random()* restArray.length)
+              
+              // for(var i=0; i<restArray.length; i++ ){
+
+              // }
+              
+    
+            // console.log(response)
+        });
+
+
+
+      });
+    
+    
+    </script>
 </body>
 </html>
