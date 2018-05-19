@@ -1,4 +1,12 @@
-        $("#submit-btn").on("click", function(){
+$(document).ready(function(){
+
+
+         var number = 30;
+         var intervalId;   
+       
+       $("#submit-btn").on("click", function(){
+       
+
         var restArray = [];
         event.preventDefault();
         var userZip = $("#zipCode").val()
@@ -49,6 +57,7 @@
                             Cousines : restArray[index2].restaurant.cuisines,
                             Rating : restArray[index2].restaurant.user_rating.aggregate_rating
                         },
+                        
                     }
 
             
@@ -83,6 +92,9 @@
               
             });
 
+         
+
+
             
             
 
@@ -101,6 +113,26 @@
             // console.log(response)
         });
 
-
-
+        //calls the run function on the click of the submit button
+        run();
       });
+      //timer run function
+      function run() {
+        clearInterval(intervalId);
+        intervalId = setInterval(decrement, 1000);
+        
+      }
+      //function to countdown the timer
+      function decrement() {
+        number--;
+        $("#timer").html("<h2>" + number + "</h2>");
+        if (number === 0) {
+          stop();
+          alert("Time Up!");
+        }
+      }
+      //function to stop the timer
+      function stop() {
+        clearInterval(intervalId);
+      }
+    });
