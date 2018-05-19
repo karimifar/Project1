@@ -1,29 +1,28 @@
-
+$(document).ready(function(){
     
-    var userZip = $("#zipCode").val().trim();
-    var queryURL = "http://maps.googleapis.com/maps/api/geocode/json?address=" + userZip,;
+ 
     
 
 
     $("#userSubmit").on("click", function(){
-        var userZip = $("#zipCode").val().trim();
+        
+        event.preventDefault();
 
-       
-        console.log(userZip);
-        console.log(food);
+        var userZip = $("#zipCode").val();
 
-
-    $.ajax({
-        url: queryURL,
-        method: "GET",
-    }).then(function(response){
-        console.log(response)
-
-      
-        var lat = response.results[0].geometry.location.lat;
-        var lng = response.results[0].geometry.location.lng;
-        console.log(lat,lng);
-  
-    });
+        $.ajax({
+            url: "http://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
+            method: "GET"
+            }).then(function(response){
+                console.log(response)
+              
+                var lat = response.results[0].geometry.location.lat;
+                var lng = response.results[0].geometry.location.lng;
+                console.log(lat,lng);
+          
+            });
+        
+    
+});
 
 });
