@@ -1,11 +1,8 @@
-body {
-    background-image: url("../images/stardust/stardust.png");
-    font-family: 'Libre Baskerville', serif;
+
+img{
+    max-width: 100%;
 }
 
-form {
-    border: 10px solid transparent;
-    padding: 15px;
-    
-    border-image: url("../images/border.png") 25 round;
+#timer {
+    text-align: center
 }
