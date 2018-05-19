@@ -1,4 +1,9 @@
-        
+$(document).ready(function(){
+
+var number = 30;
+var intervalId;   
+ 
+
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -96,7 +101,7 @@ $("#submit-btn").on("click", function(){
             
             });
         });
-
+        run();
     });
 
 //Tyler's upvote function
@@ -123,4 +128,28 @@ $("#submit-btn").on("click", function(){
      
      });
 
+
+     function run() {
+        clearInterval(intervalId);
+        intervalId = setInterval(decrement, 1000);
+        
+      };
+      //function to countdown the timer
+      function decrement() {
+        number--;
+        var num = $("<div>")
+        num.addClass("page-link")
+        num.html("<h2>" + number + "</h2>")
+        $("#timer").html(num);
+        if (number === 0) {
+        alert("Time Up!");
+          stop();
+          
+        }
+      };
+      //function to stop the timer
+      function stop() {
+        clearInterval(intervalId);
+      };
+    });
 
