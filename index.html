@@ -2,8 +2,9 @@
 <html>
 <head>
     <title>Choose your restaurants</title>
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script src="assets/javascript/app.js"></script>
@@ -29,8 +30,8 @@
                 </div>
             
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="row justify-content-center" id="form">
-                        <div class="col-9" style="height: 500px;">
+                    <div class="row align-items-center justify-content-center" style="height: 500px;">
+                        <div class="col-9">
                             <form>
                                 <div class="form-group">
                                     <label>Zip Code</label>
@@ -41,7 +42,7 @@
                                     <input type="text" class="form-control" id="foodType" placeholder="BBQ">
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary" id="userSubmit">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submit-btn">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -49,6 +50,9 @@
             </div>
 
             <!-- Pick restaurants -->
+            
+            
+
             <div class="card">
                 <div class="card-header" id="headingTwo">
                     <h5 class="mb-0">
@@ -57,14 +61,16 @@
                         </button>
                     </h5>
                 </div>
-
+                
+               
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div id="timer">..</div>
                     <div class="row justify-content-center" id="step1" style="height: 500px;">
                         <div class="col-5" id="pick1">
                             <div class="card" style="width: 100%;">
                                 <img class="card-img-top" src="assets/images/r1.jpg" alt="Card image cap">
                                 <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
+            b                      <h5 class="card-title">Card title</h5>
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                     <a href="#" class="btn btn-primary">Go somewhere</a>
                                 </div>
@@ -83,6 +89,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
 
             <!-- Result -->
@@ -125,5 +132,6 @@
 
 
     </div>
+
 </body>
 </html>
