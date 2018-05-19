@@ -121,18 +121,22 @@ $(document).ready(function(){
         clearInterval(intervalId);
         intervalId = setInterval(decrement, 1000);
         
-      }
+      };
       //function to countdown the timer
       function decrement() {
         number--;
-        $("#timer").html("<h2>" + number + "</h2>");
+        var num = $("<div>")
+        num.addClass("page-link")
+        num.html("<h2>" + number + "</h2>")
+        $("#timer").html(num);
         if (number === 0) {
+        alert("Time Up!");
           stop();
-          alert("Time Up!");
+          
         }
-      }
+      };
       //function to stop the timer
       function stop() {
         clearInterval(intervalId);
-      }
+      };
     });
