@@ -24,11 +24,11 @@ form {
 /* result */
 img{
     max-width: 100%;
+    height: auto;
 }
 
-<<<<<<< HEAD
-=======
 #timer {
-    text-align: center
+
+    text-align: center;
+    margin: auto;
 }
->>>>>>> master
