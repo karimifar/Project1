@@ -16,93 +16,85 @@ var config = {
  var database = firebase.database();
 
 var restArray = [];
+
+function appendRest(id,rest){
+    $("#"+id).append("<img src='"+rest.Img+ "'>")
+    $("#"+id).append("<h1 class='rest-name'>"+rest.Name+ "</h1>")
+    $("#"+id).append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+rest.Location+ "</p>")
+    $("#"+id).append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+rest.Cousines+ "</p>")
+    $("#"+id).append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+rest.Cost+ "</p>")
+    $("#"+id).append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+rest.Rating+ "</p>")
+    $("#"+id).attr("data-restID", rest.RestID)
+}
+
+function createRestObject(rest_obj){
+    var result = {
+        Name: rest_obj.name,
+        Img: rest_obj.featured_image,
+        Location: rest_obj.location.address,
+        Cost : rest_obj.average_cost_for_two,
+        Cousines : rest_obj.cuisines,
+        Rating : rest_obj.user_rating.aggregate_rating,
+        RestID : rest_obj.R.res_id,
+    }
+    return result;
+}
+
 function writeRest(){
-        var index1 = Math.floor(Math.random()* restArray.length)
-        var index2 = Math.floor(Math.random()* restArray.length)
-        
-        do{
-            index2 = Math.floor(Math.random()* restArray.length)
-        }while (index1==index2)
+    // Need to handle the situation if no restaurant is found or less than one
+    console.log("restArray.length="+restArray.length)  
+      
+    var index1 = Math.floor(Math.random()* restArray.length)
+    var index2 = Math.floor(Math.random()* restArray.length)
+    
+    while(restArray.length > 1 && index1 === index2){
+        index2 = Math.floor(Math.random()* restArray.length)
+    }
 
-        console.log(restArray[index1].restaurant.name,restArray[index2].restaurant.name)
+    var index1_rest = restArray[index1].restaurant;
+    var index2_rest = restArray[index2].restaurant;
 
-        var restaurants={
-            rest1:{
-                Name: restArray[index1].restaurant.name,
-                Img: restArray[index1].restaurant.featured_image,
-                Location: restArray[index1].restaurant.location.address,
-                Cost : restArray[index1].restaurant.average_cost_for_two,
-                Cousines : restArray[index1].restaurant.cuisines,
-                Rating : restArray[index1].restaurant.user_rating.aggregate_rating,
-                RestID : restArray[index1].restaurant.R.res_id,
-            },
-            rest2:{
-                Name: restArray[index2].restaurant.name,
-                Img: restArray[index2].restaurant.featured_image,
-                Location: restArray[index2].restaurant.location.address,
-                Cost : restArray[index2].restaurant.average_cost_for_two,
-                Cousines : restArray[index2].restaurant.cuisines,
-                Rating : restArray[index2].restaurant.user_rating.aggregate_rating,
-                RestID : restArray[index2].restaurant.R.res_id,
-            },
-        }
+    console.log(index1_rest.name,index2_rest.name)
 
-        function appendRest1(){
-            $("#rest1").empty()
-            $("#rest1").append("<img src='"+restaurants.rest1.Img+ "'>")
-            $("#rest1").append("<h1 class='rest-name'>"+restaurants.rest1.Name+ "</h1>")
-            $("#rest1").append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+restaurants.rest1.Location+ "</p>")
-            $("#rest1").append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+restaurants.rest1.Cousines+ "</p>")
-            $("#rest1").append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+restaurants.rest1.Cost+ "</p>")
-            $("#rest1").append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+restaurants.rest1.Rating+ "</p>")
-            $("#rest1").attr("data-restID", restaurants.rest1.RestID)
-        }
-        
-        function appendRest2(){
-            $("#rest2").empty()
-            $("#rest2").append("<img src='"+restaurants.rest2.Img+ "'>")
-            $("#rest2").append("<h1 class='rest-name'>"+restaurants.rest2.Name+ "</h1>")
-            $("#rest2").append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+restaurants.rest2.Location+ "</p>")
-            $("#rest2").append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+restaurants.rest2.Cousines+ "</p>")
-            $("#rest2").append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+restaurants.rest2.Cost+ "</p>")
-            $("#rest2").append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+restaurants.rest2.Rating+ "</p>")
-            $("#rest2").attr("data-restID", restaurants.rest1.RestID)
-        }
+    var restaurants={
+        rest1: createRestObject(index1_rest),
+        rest2: createRestObject(index2_rest)
+    }
 
-        appendRest1();
-        appendRest2();
+    appendRest("rest1",restaurants.rest1);
+    appendRest("rest2",restaurants.rest2);
 }
 
         
 $("#submit-btn").on("click", function(){
-        event.preventDefault();
-        var userZip = $("#zipCode").val()
-        
-        var foodType= $("#foodType").val()
-        $.ajax({
+    event.preventDefault();
+    var userZip = $("#zipCode").val()
+    
+    var foodType= $("#foodType").val()
+    $.ajax({
         url: "http://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
         method: "GET"
-        }).then(function(response){
-            console.log(response)
+    }).then(function(response){
+        console.log(response)
+    
+        var lat = response.results[0].geometry.location.lat;
+        var lng = response.results[0].geometry.location.lng;
+        console.log(lat,lng);
         
-            var lat = response.results[0].geometry.location.lat;
-            var lng = response.results[0].geometry.location.lng;
-            console.log(lat,lng);
-            
-            var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-            var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=20&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
-            $.ajax({
-            url: queryURL,
-            method: "GET",
-            }).then(function(response) {
-                restArray= response.restaurants;
-                console.log(restArray)
-                writeRest();
-            
-            });
+        var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=20&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        $.ajax({
+        url: queryURL,
+        method: "GET",
+        }).then(function(response) {
+            restArray= response.restaurants;
+            console.log(restArray)
+            writeRest();
+        
         });
-        run();
     });
+    run();
+});
 
 //Tyler's upvote function
     $("body").on("click", ".rest-card", function() {
