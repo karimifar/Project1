@@ -1,5 +1,12 @@
 body {
-    background-image: url("../images/stardust/stardust.png")
+    background-image: url("../images/stardust/stardust.png");
+    color: white;
+}
+
+.card {
+    background-color: transparent;
+    /* z-index: -1; */
+    
 }
 
 /* header */
@@ -9,12 +16,22 @@ body {
 }
 
 /* question form */
+.box {
+    position:relative;
+    display:inline-block;
+    width: 15px;
+    height: 15px;
+    border: teal 20px solid;
+    text-align: center;
+    color: white;
+}
+
 form {
     border: 10px solid transparent;
     padding: 15px;
-    opacity: 0;
+    z-index: 3;
     background: linear-gradient(to bottom right, teal, lightgreen);;
-    border-image: url("../images/border.png") 25 round;
+    border-image: url("../images/border.png") 40 round;
 }
 
 .collapseBnt {
