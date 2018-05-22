@@ -36,6 +36,13 @@ function createRestObject(rest_obj){
         Cousines : rest_obj.cuisines,
         Rating : rest_obj.user_rating.aggregate_rating,
         RestID : rest_obj.R.res_id,
+        // Name: "Kerlin BBQ",
+        // Img: "../images/Kerlin.jpg",
+        // Location: "1700 E Cesar Chavez Street, Austin 78702",
+        // Cost : "30",
+        // Cousines : "BBQ",
+        // Rating : "3.4",
+        // RestID : 2,
     }
     return result;
 }
@@ -84,8 +91,8 @@ $("#submit-btn").on("click", function(){
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
         var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=20&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
         $.ajax({
-        url: queryURL,
-        method: "GET",
+            url: queryURL,
+            method: "GET",
         }).then(function(response) {
             restArray= response.restaurants;
             console.log(restArray)
