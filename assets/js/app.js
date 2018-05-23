@@ -106,6 +106,7 @@ $("#submit-btn").on("click", function(){
     });
 var clicked = $(this);
 //Tyler's upvote function
+    var upVotes = 1;
     $("body").on("click", ".rest-card", function() {
 
         event.preventDefault();
@@ -114,82 +115,53 @@ var clicked = $(this);
         var restID = $(this).attr("data-restID");
         console.log("Restaurant ID: " + restID);
        
-     
-        database.ref(restID).on("value", function(snapshot) {
-            // upVotes = snapshot.val().Upvotes;
-            console.log(snapshot.val().Upvotes);
-            upVotes++
-        })
-     
+        var databaseRef = firebase.database().ref(restID).child("Upvotes");
+        
+
         var newRest = {
             RestaurantID: restID,
             Upvotes: upVotes
         };
-        database.ref(restID).set(newRest)
+
+        // databaseRef.set(upVotes)
+
+        // databaseRef.transaction(function(Upvotes) {
+        //     if (Upvotes) {
+        //         Upvotes = Upvotes + 1;
+        //         return Upvotes;
+        //     }else{
+        //         databaseRef.set(upVotes)
+        //     }
+                
+            
+        // });
+        // database.ref(restID).on("value", function(snapshot) {
+        //     // upVotes = snapshot.val().Upvotes;
+        //     if(snapshot.val() != null && snapshot.val().Upvotes > upVotes ){
+        //         console.log(snapshot.val().Upvotes);
+        //         upVotes++;
+        //     }
+        // })
+     
+       
+
+        database.ref(restID).once("value",function(snapshot){
+            if(snapshot.val() === null){
+                database.ref(restID).set(newRest);
+            }else{
+                console.log("snapshot.val().Upvotes="+snapshot.val().Upvotes)
+                var v = snapshot.val().Upvotes + 1;
+                database.ref(restID).update({Upvotes: v});
+            }
+        })
+
         console.log(newRest);
        
        
         reLoad();
      
      });
-     function reLoad(){
-        console.log(this);
-        var index1 = Math.floor(Math.random()* restArray.length)
-        var index2 = Math.floor(Math.random()* restArray.length)
-        
-        do{
-            index2 = Math.floor(Math.random()* restArray.length)
-        }while (index1==index2)
-
-        console.log(restArray[index1].restaurant.name,restArray[index2].restaurant.name)
-
-        var restaurants={
-            rest1:{
-                Name: restArray[index1].restaurant.name,
-                Img: restArray[index1].restaurant.featured_image,
-                Location: restArray[index1].restaurant.location.address,
-                Cost : restArray[index1].restaurant.average_cost_for_two,
-                Cousines : restArray[index1].restaurant.cuisines,
-                Rating : restArray[index1].restaurant.user_rating.aggregate_rating,
-                RestID : restArray[index1].restaurant.R.res_id,
-            },
-            rest2:{
-                Name: restArray[index2].restaurant.name,
-                Img: restArray[index2].restaurant.featured_image,
-                Location: restArray[index2].restaurant.location.address,
-                Cost : restArray[index2].restaurant.average_cost_for_two,
-                Cousines : restArray[index2].restaurant.cuisines,
-                Rating : restArray[index2].restaurant.user_rating.aggregate_rating,
-                RestID : restArray[index2].restaurant.R.res_id,
-            },
-        }
-
-        function appendRest1(){
-            $("#rest1").empty()
-            $("#rest1").append("<img src='"+clicked.restaurants.rest1.Img+ "'>")
-            $("#rest1").append("<h1 class='rest-name'>"+clicked..restaurants.rest1.Name+ "</h1>")
-            $("#rest1").append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+clicked.restaurants.rest1.Location+ "</p>")
-            $("#rest1").append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+clicked.restaurants.rest1.Cousines+ "</p>")
-            $("#rest1").append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+clicked..restaurants.rest1.Cost+ "</p>")
-            $("#rest1").append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+clicked.restaurants.rest1.Rating+ "</p>")
-            $("#rest1").attr("data-restID", clicked.restaurants.rest1.RestID)
-        }
-        
-        function appendRest2(){
-            $("#rest2").empty()
-            $("#rest2").append("<img src='"+restaurants.rest2.Img+ "'>")
-            $("#rest2").append("<h1 class='rest-name'>"+restaurants.rest2.Name+ "</h1>")
-            $("#rest2").append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+restaurants.rest2.Location+ "</p>")
-            $("#rest2").append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+restaurants.rest2.Cousines+ "</p>")
-            $("#rest2").append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+restaurants.rest2.Cost+ "</p>")
-            $("#rest2").append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+restaurants.rest2.Rating+ "</p>")
-            $("#rest2").attr("data-restID", restaurants.rest1.RestID)
-        }
-
-        appendRest1();
-        appendRest2();
-}
-
+     
      function run() {
         clearInterval(intervalId);
         intervalId = setInterval(decrement, 1000);
