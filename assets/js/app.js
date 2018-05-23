@@ -105,25 +105,54 @@ $("#submit-btn").on("click", function(){
     });
 
 //Tyler's upvote function
+    var upVotes = 1;
     $("body").on("click", ".rest-card", function() {
         event.preventDefault();
         console.log(this);
      
         var restID = $(this).attr("data-restID");
         console.log("Restaurant ID: " + restID);
-        var upVotes = 3;
-     
-        database.ref(restID).on("value", function(snapshot) {
-            // upVotes = snapshot.val().Upvotes;
-            console.log(snapshot.val().Upvotes);
-            upVotes++
-        })
-     
+       
+        var databaseRef = firebase.database().ref(restID).child("Upvotes");
+        
+
         var newRest = {
             RestaurantID: restID,
             Upvotes: upVotes
         };
-        database.ref(restID).set(newRest)
+
+        // databaseRef.set(upVotes)
+
+        // databaseRef.transaction(function(Upvotes) {
+        //     if (Upvotes) {
+        //         Upvotes = Upvotes + 1;
+        //         return Upvotes;
+        //     }else{
+        //         databaseRef.set(upVotes)
+        //     }
+                
+            
+        // });
+        // database.ref(restID).on("value", function(snapshot) {
+        //     // upVotes = snapshot.val().Upvotes;
+        //     if(snapshot.val() != null && snapshot.val().Upvotes > upVotes ){
+        //         console.log(snapshot.val().Upvotes);
+        //         upVotes++;
+        //     }
+        // })
+     
+       
+
+        database.ref(restID).once("value",function(snapshot){
+            if(snapshot.val() === null){
+                database.ref(restID).set(newRest);
+            }else{
+                console.log("snapshot.val().Upvotes="+snapshot.val().Upvotes)
+                var v = snapshot.val().Upvotes + 1;
+                database.ref(restID).update({Upvotes: v});
+            }
+        })
+
         console.log(newRest);
      
      });
