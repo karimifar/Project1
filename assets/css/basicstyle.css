@@ -1,10 +1,51 @@
+body {
+    background-image: url("../images/stardust/stardust.png");
+    color: white;
+}
 
+.card {
+    background-color: transparent;
+    /* z-index: -1; */
+    
+}
+
+/* header */
+#header {
+    color: teal;
+    text-shadow: 1px 1px 2px white, 0 0 25px yellow, 0 0 5px orange;
+}
+
+/* question form */
+.box {
+    position:relative;
+    display:inline-block;
+    width: 15px;
+    height: 15px;
+    border: teal 20px solid;
+    text-align: center;
+    color: white;
+}
+
+form {
+    border: 10px solid transparent;
+    padding: 15px;
+    z-index: 3;
+    background: linear-gradient(to bottom right, teal, lightgreen);;
+    border-image: url("../images/border.png") 40 round;
+}
+
+.collapseBnt {
+    color: teal;
+    background: white;
+}
+/* result */
 img{
     max-width: 100%;
     height: auto;
 }
 
 #timer {
+
     text-align: center;
     margin: auto;
 }

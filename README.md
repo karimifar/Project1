@@ -2,7 +2,43 @@
 Em Karimifar
 Andrew Berndt
 Yuechang Mei (Erin)
-<<<<<<< HEAD
-=======
 Tyler Whitson
->>>>>>> ea1c7e7dea4baf685d26545338aefbc92c242d07
+
+Summary:
+
+## Getting Started
+
+null
+
+### Prerequisites
+
+null
+
+
+## Built With
+
+* HTML, CSS, bootstrap - Web page layout and makeup
+* Javascript and JQuery - Script to call API, access Google Firebase and handle activities
+* Google Firebase
+
+
+## Contributing
+
+null
+
+## Authors
+
+null
+
+
+## License
+
+null
+
+## Acknowledgments
+
+null
+
+
+
+
