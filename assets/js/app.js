@@ -2,7 +2,8 @@ $(document).ready(function(){
 
 var number = 30;
 var intervalId;   
- 
+var index1;
+var index2;
 
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
@@ -18,6 +19,7 @@ var config = {
 var restArray = [];
 
 function appendRest(id,rest){
+    $("#"+id).empty()
     $("#"+id).append("<img src='"+rest.Img+ "'>")
     $("#"+id).append("<h1 class='rest-name'>"+rest.Name+ "</h1>")
     $("#"+id).append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+rest.Location+ "</p>")
@@ -25,6 +27,7 @@ function appendRest(id,rest){
     $("#"+id).append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+rest.Cost+ "</p>")
     $("#"+id).append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+rest.Rating+ "</p>")
     $("#"+id).attr("data-restID", rest.RestID)
+    // picked_rest.push(rest.RestID);
 }
 
 function createRestObject(rest_obj){
@@ -51,8 +54,8 @@ function writeRest(){
     // Need to handle the situation if no restaurant is found or less than one
     console.log("restArray.length="+restArray.length)  
       
-    var index1 = Math.floor(Math.random()* restArray.length)
-    var index2 = Math.floor(Math.random()* restArray.length)
+    index1 = Math.floor(Math.random()* restArray.length)
+    index2 = Math.floor(Math.random()* restArray.length)
     
     while(restArray.length > 1 && index1 === index2){
         index2 = Math.floor(Math.random()* restArray.length)
@@ -89,7 +92,7 @@ $("#submit-btn").on("click", function(){
         console.log(lat,lng);
         
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=20&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
         $.ajax({
             url: queryURL,
             method: "GET",
@@ -105,24 +108,69 @@ $("#submit-btn").on("click", function(){
 
     
 //Tyler's upvote function
+    var picked_rest = {}
     var upVotes = 1;
     $("body").on("click", ".rest-card", function() {
+        if (restArray.length > 2){
+            // alert("out of options")
+        
+
+            var divId= $(this).attr('id');
+            console.log(divId)
+            if(!picked_rest[$(this).attr("data-restID")]){
+                picked_rest[$(this).attr("data-restID")] = 1;
+            }else{
+                picked_rest[$(this).attr("data-restID")]++;
+            }
+            
+            console.log(picked_rest[$(this).attr("data-restID")]);
+            console.log(picked_rest)
+            if (divId==="rest1"){
+                var re_rest_id = $("#rest1").attr("data-restID");
+                $("#rest2").empty();
+                restArray.splice(index2,1);
+                var restObject;
+                // var stop = true;
+                do{
+                    index2 = Math.floor(Math.random()* restArray.length);
+                    var index2_rest = restArray[index2].restaurant;
+                    restObject = createRestObject(index2_rest);
+                    if(restObject.RestID != re_rest_id){
+                    appendRest("rest2",restObject);
+                    }
+                    console.log(restArray.length);
+                    console.log(restObject.RestID, re_rest_id);
+
+                    }while(restObject.RestID == re_rest_id)
+                
+
+            }else{
+                var re_rest_id = $("#rest2").attr("data-restID");
+                $("#rest1").empty();
+                restArray.splice(index1,1);
+                var restObject;
+                // var stop = true;
+                do{
+                    index1 = Math.floor(Math.random()* restArray.length);
+                    var index1_rest = restArray[index1].restaurant;
+                    restObject = createRestObject(index1_rest);
+                    if(restObject.RestID != re_rest_id){
+                    appendRest("rest1",restObject);
+                    }
+                    console.log(restArray.length);
+                    console.log(restObject.RestID, re_rest_id);
+
+                    }while(restObject.RestID == re_rest_id)
+            }
+        }else{
+            alert("out of options");
+            $(".rest-card").empty();
+        }
+
         event.preventDefault();
         console.log(this);
+     
         var restID = $(this).attr("data-restID");
-        var upVote = 0;
-        upVote++;
-        database.ref().push({
-            [restID]: upVote
-        })
-
-        database.ref().on("value", function(snapshot) {
-            // upVote= snapshot.val()[restID];  
-            console.log(snapshot.val()[restID]) 
-            console.log(restID)
-        })
-        
-        console.log("Restaurant ID: " + restID);
         console.log("Restaurant ID: " + restID);
        
         var databaseRef = firebase.database().ref(restID).child("Upvotes");
@@ -133,27 +181,7 @@ $("#submit-btn").on("click", function(){
             Upvotes: upVotes
         };
 
-        // databaseRef.set(upVotes)
 
-        // databaseRef.transaction(function(Upvotes) {
-        //     if (Upvotes) {
-        //         Upvotes = Upvotes + 1;
-        //         return Upvotes;
-        //     }else{
-        //         databaseRef.set(upVotes)
-        //     }
-                
-            
-        // });
-        // database.ref(restID).on("value", function(snapshot) {
-        //     // upVotes = snapshot.val().Upvotes;
-        //     if(snapshot.val() != null && snapshot.val().Upvotes > upVotes ){
-        //         console.log(snapshot.val().Upvotes);
-        //         upVotes++;
-        //     }
-        // })
-     
-       
 
         database.ref(restID).once("value",function(snapshot){
             if(snapshot.val() === null){
@@ -168,7 +196,6 @@ $("#submit-btn").on("click", function(){
         console.log(newRest);
      
      });
-
 
      function run() {
         clearInterval(intervalId);
