@@ -18,6 +18,7 @@ var config = {
 var restArray = [];
 
 function appendRest(id,rest){
+    $("#"+id).empty()
     $("#"+id).append("<img src='"+rest.Img+ "'>")
     $("#"+id).append("<h1 class='rest-name'>"+rest.Name+ "</h1>")
     $("#"+id).append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+rest.Location+ "</p>")
@@ -109,20 +110,8 @@ $("#submit-btn").on("click", function(){
     $("body").on("click", ".rest-card", function() {
         event.preventDefault();
         console.log(this);
+     
         var restID = $(this).attr("data-restID");
-        var upVote = 0;
-        upVote++;
-        database.ref().push({
-            [restID]: upVote
-        })
-
-        database.ref().on("value", function(snapshot) {
-            // upVote= snapshot.val()[restID];  
-            console.log(snapshot.val()[restID]) 
-            console.log(restID)
-        })
-        
-        console.log("Restaurant ID: " + restID);
         console.log("Restaurant ID: " + restID);
        
         var databaseRef = firebase.database().ref(restID).child("Upvotes");
@@ -133,27 +122,7 @@ $("#submit-btn").on("click", function(){
             Upvotes: upVotes
         };
 
-        // databaseRef.set(upVotes)
 
-        // databaseRef.transaction(function(Upvotes) {
-        //     if (Upvotes) {
-        //         Upvotes = Upvotes + 1;
-        //         return Upvotes;
-        //     }else{
-        //         databaseRef.set(upVotes)
-        //     }
-                
-            
-        // });
-        // database.ref(restID).on("value", function(snapshot) {
-        //     // upVotes = snapshot.val().Upvotes;
-        //     if(snapshot.val() != null && snapshot.val().Upvotes > upVotes ){
-        //         console.log(snapshot.val().Upvotes);
-        //         upVotes++;
-        //     }
-        // })
-     
-       
 
         database.ref(restID).once("value",function(snapshot){
             if(snapshot.val() === null){
@@ -168,7 +137,6 @@ $("#submit-btn").on("click", function(){
         console.log(newRest);
      
      });
-
 
      function run() {
         clearInterval(intervalId);
