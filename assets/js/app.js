@@ -104,27 +104,25 @@ $("#submit-btn").on("click", function(){
         run();
     });
 
+    
 //Tyler's upvote function
     $("body").on("click", ".rest-card", function() {
         event.preventDefault();
         console.log(this);
-     
         var restID = $(this).attr("data-restID");
-        console.log("Restaurant ID: " + restID);
-        var upVotes = 3;
-     
-        database.ref(restID).on("value", function(snapshot) {
-            // upVotes = snapshot.val().Upvotes;
-            console.log(snapshot.val().Upvotes);
-            upVotes++
+        var upVote = 0;
+        upVote++;
+        database.ref().push({
+            [restID]: upVote
         })
-     
-        var newRest = {
-            RestaurantID: restID,
-            Upvotes: upVotes
-        };
-        database.ref(restID).set(newRest)
-        console.log(newRest);
+
+        database.ref().on("value", function(snapshot) {
+            // upVote= snapshot.val()[restID];  
+            console.log(snapshot.val()[restID]) 
+            console.log(restID)
+        })
+        
+        console.log("Restaurant ID: " + restID);
      
      });
 
@@ -142,7 +140,6 @@ $("#submit-btn").on("click", function(){
         num.html("<h2>" + number + "</h2>")
         $("#timer").html(num);
         if (number === 0) {
-        alert("Time Up!");
           stop();
           
         }
