@@ -34,7 +34,7 @@ p{
     font-weight: 500;
 }
 .rest-card{
-    padding: 30px;
+    padding: 50px;
     transition: all 0.2s ease-in-out;
 }
 
@@ -69,4 +69,20 @@ p{
 }
 .rest-location{
     margin-top: 30px;
+}
+
+#submit-btn{
+    width: 20%;
+    margin: 10px 40%;
+    color: #69B578;
+    border-color: #69B578;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.1s ease-in-out;
+    padding: 10px 20px;
+}
+#submit-btn:hover{
+background-color: #69B578;
+color: white;
+transform: scale(0.95);
 }

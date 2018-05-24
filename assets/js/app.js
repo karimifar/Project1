@@ -219,12 +219,26 @@ $("#submit-btn").on("click", function(){
       function stop() {
         clearInterval(intervalId);
       };
+
     });
 
 function submitAnimation(){
     var tl = new TimelineMax();
-    tl.to("#search-div", 0.1, {scale:1.03, transformOrigin: "50% 50%"})
+    tl.to("#search-div", 0.4, {scale:1.05, transformOrigin: "50% 50%"})
     tl.to("#search-div", 0.2, {scale:0, transformOrigin: "50% 50%"})
-    tl.to("#search-div", 0.1, {height:0, transformOrigin: "50% 0%"})
-    tl.to("#logo", 0.3, {scale: 0.8, transformOrigin: "50% 0%", ease:Power4.easeOut })
+    tl.to("#search-div", 0.1, {height:0, transformOrigin: "50% 100%"})
+    tl.to("#logo", 0.3, {scale: 0.6, transformOrigin: "50% 0%", ease:Power4.easeOut })
 }
+
+function logoAnimation(){
+    var tl = new TimelineMax();
+    tl.fromTo("#logo", 0.3, {y:100, scale: 0.1  ,opacity:0, transformOrigin: "50% 50%", ease:Power4.easeOut},{y:100, scale: 1.3 , opacity:1, transformOrigin: "50% 50%", ease:Power4.easeOut})
+    // tl.fromTo("#icon", 0.5, {scale: 0.8  ,transformOrigin: "50% 50%", ease:Elastic.easeOut},{scale: 1  ,transformOrigin: "50% 50%", ease:Elastic.easeOut})
+    tl.staggerFrom(".ceiling", 1, {scale: 0 ,transformOrigin: "50% 50%", ease:Elastic.easeOut}, 0.08)
+    tl.to("#logo", 0.5, {y:0, scale: 1  ,opacity:1, transformOrigin: "50% 50%", ease:Power4.easeOut}, "=-0.5")
+    tl.staggerFrom(".form-el", 1, {opacity:0 , transformOrigin: "50% 50%", ease:Power1.easeIn}, 0.3, "=-0.5")
+
+}
+
+
+logoAnimation();
