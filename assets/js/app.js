@@ -78,6 +78,7 @@ function writeRest(){
         
 $("#submit-btn").on("click", function(){
     event.preventDefault();
+    submitAnimation();
     var userZip = $("#zipCode").val()
     
     var foodType= $("#foodType").val()
@@ -92,7 +93,7 @@ $("#submit-btn").on("click", function(){
         console.log(lat,lng);
         
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=20&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
         $.ajax({
             url: queryURL,
             method: "GET",
@@ -220,3 +221,10 @@ $("#submit-btn").on("click", function(){
       };
     });
 
+function submitAnimation(){
+    var tl = new TimelineMax();
+    tl.to("#search-div", 0.1, {scale:1.03, transformOrigin: "50% 50%"})
+    tl.to("#search-div", 0.2, {scale:0, transformOrigin: "50% 50%"})
+    tl.to("#search-div", 0.1, {height:0, transformOrigin: "50% 0%"})
+    tl.to("#logo", 0.3, {scale: 0.8, transformOrigin: "50% 0%", ease:Power4.easeOut })
+}
