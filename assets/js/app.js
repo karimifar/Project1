@@ -104,7 +104,7 @@ $("#submit-btn").on("click", function(){
     
     var foodType= $("#foodType").val()
     $.ajax({
-        url: "http://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
+        url: "https://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
         method: "GET"
     }).then(function(response){
         console.log(response)
