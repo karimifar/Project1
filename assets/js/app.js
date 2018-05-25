@@ -2,7 +2,7 @@ var number = 30;
 var intervalId;   
 var index1;
 var index2;
-
+var allRest = [];
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -120,6 +120,7 @@ $("#submit-btn").on("click", function(){
             method: "GET",
         }).then(function(response) {
             restArray= response.restaurants;
+            getAllIds();
             console.log(restArray)
             writeRest();
         
@@ -156,8 +157,9 @@ $("body").on("click", ".rest-card", function() {
             index1 = printNewRestaurant("rest1",restID,index1)
         }
     }else{
-        alert("out of options");
+        //alert("out of options");
         $(".rest-card").empty();
+        printVotes();
     }
     
 });
@@ -204,5 +206,91 @@ function logoAnimation(){
 
 }
 
-
 logoAnimation();
+
+function printR(restaurantVote,restaurantName,restaurantImage){
+    // var restaurantId = allRest[i].RestID;
+            
+    // var restaurantVote= snapshot.val()[restaurantId]? snapshot.val()[restaurantId].Upvotes : 0;
+    // var restaurantName = allRest[i].Name;
+    // var restaurantImage = allRest[i].Img;
+    console.log(restaurantVote);
+    var resultCard = $("<div class='result-card'>");
+    resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurantImage+"'></div>");
+    resultCard.append("<h2 class='result-element result-vote'>"+restaurantVote+"</h2>")
+    resultCard.append("<h2 class='result-element result-name'>"+restaurantName+"</h2>")
+    $("#all-restaurants").append(resultCard)
+}
+
+
+var firebase_result = [];
+var just_vote = [];
+var sortedID = []
+function printVotes(){
+    database.ref().once("value",function(snapshot){
+        if (snapshot.val() !== null){
+            for(var i=0; i<allRest.length; i++){
+                var restaurantId = allRest[i].RestID;        
+                var restaurantVote= snapshot.val()[restaurantId]? snapshot.val()[restaurantId].Upvotes : 0;
+                var restaurantName = allRest[i].Name;
+                var restaurantImage = allRest[i].Img;
+                firebase_result.push({
+                                        RestID:restaurantId,
+                                        Upvotes:parseInt(restaurantVote),
+                                        restaurantName: restaurantName,
+                                        restaurantImage: restaurantImage,
+                                    })
+                if(just_vote.indexOf(parseInt(restaurantVote)) == -1){
+                    just_vote.push(parseInt(restaurantVote));
+                }                 
+            }
+        }
+
+        
+        console.log(firebase_result)
+        just_vote = just_vote.sort(function(a, b){return a - b});
+        console.log(just_vote)
+        
+        for(var i=just_vote.length-1;i>-1;i--){
+            for(var j=0;j<firebase_result.length;j++){
+                // console.log(firebase_result[j][1])
+                if(firebase_result[j].Upvotes === just_vote[i]){
+                    sortedID.push(firebase_result[j])
+                }
+            }
+        }
+
+        console.log("sortedID");
+        console.log(sortedID);
+
+        // if (snapshot.val() !== null){
+            for(var i=0; i<sortedID.length; i++){
+                // allRest.splice()
+                console.log(sortedID[i].restaurantName)
+                printR(sortedID[i].Upvotes,
+                       sortedID[i].restaurantName,
+                       sortedID[i].restaurantImage
+                      );
+            }
+        // }
+
+
+
+        
+    });
+}
+
+function getAllIds(){
+
+    for(var i=0; i<restArray.length; i++){
+        var restInfo =  createRestObject(restArray[i].restaurant);
+        allRest.push(restInfo);
+    }
+
+}
+
+//retrieve the votes from firebase and store them in an object (restID: upvote) object contains the initial n restaurants
+//on the result page we display the n restaurants with their firebase votes
+//feature the winner restaurant
+//+ highlight the restaurants the user clicked on 
+//retry button
