@@ -53,12 +53,20 @@ function writeRest(){
 
     appendRest("rest1",allRest[index1]);
     appendRest("rest2",allRest[index2]);
+    if(index1>index2){
+        restArray.splice(index1,1)
+        restArray.splice(index2,1)
+    }else{
+        index2--;
+        restArray.splice(index1,1);
+        restArray.splice(index2,1);
+    }
 }
 
 // print restaurant with random index
 function printNewRestaurant(divID,restID,index){
     // remove restaurant from restArray
-    restArray.splice(index,1);
+    // restArray.splice(index,1);
 
     var random_index;
     var stop = true;
@@ -68,6 +76,7 @@ function printNewRestaurant(divID,restID,index){
         if(random_rest_id != restID){ //if we find a restaurant different from the one we pick, print it and stop the while loop
             var restObject = createRestObject(restArray[random_index].restaurant);
             appendRest(divID,restObject);
+            restArray.splice(random_index,1);
             stop = false;
 
             console.log(restID+" is picked")
@@ -109,6 +118,14 @@ function printRestList(restaurant_obj){
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
     $("#all-restaurants").append(resultCard)
+
+    if(picked_rest[restaurant_obj.RestID]){
+        resultCard.attr("class", "result-card picked")
+    }
+}
+
+function highlightPicked(){
+    picked_rest
 }
 
 function printRestInDecreasing(upvotes_array,allRest){
@@ -130,6 +147,7 @@ function printVotes(){
     database.ref().once("value",function(snapshot){
         var upvotes_array = [];
         var data = snapshot.val();
+        $(".timer").empty();
 
         // save Upvotes to each restaurant object and print a list of restaurants order by their Upvotes
         if (data !== null){
@@ -165,7 +183,7 @@ function run() {
 function decrement() {
     number--;
     var num = $("<div>")
-    num.addClass("page-link")
+    num.addClass("btn btn-info")
     num.html("<h2>" + number + "</h2>")
     $("#timer").html(num);
     if (number === 0) {
@@ -173,14 +191,14 @@ function decrement() {
         random();
         run();
 
-
     }
 };
 
 //function to stop the timer
 function stop() {
     clearInterval(intervalId);
-    number = 15;
+   
+    
     
 };
 
@@ -267,13 +285,14 @@ $("body").on("click", ".rest-card div", function() {
     saveVote(restID);
 
     // print new restaurant 
-    if (restArray.length > 2){
+    if (restArray.length > 0){
         var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
         console.log(divId)
 
         if (divId==="rest1"){ // if rest1 is picked
             transitionOut("rest2");
-            index2 = printNewRestaurant("rest2",restID,index2)    
+            index2 = printNewRestaurant("rest2",restID,index2)   
+             
         }else{  // else rest2 is picked
             transitionOut("rest1");
             index1 = printNewRestaurant("rest1",restID,index1)
@@ -292,15 +311,18 @@ function random() {
   
 
     if (restArray.length > 2){
-        if (randomRest===0){ // if rest1 is picked
+
+        if (randomRest===0){ 
             transitionOut("rest2");
             index2 = printNewRestaurant("rest2",index2)    
-            console.log(index1);
+            console.log(index2);
             
-        }else{  // else rest2 is picked
+        
+        }else{  
             transitionOut("rest1");
             index1 = printNewRestaurant("rest1",index1)
            console.log(index1);
+          
         }
     }else{
         $(".rest-card").empty();
