@@ -118,6 +118,14 @@ function printRestList(restaurant_obj){
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
     $("#all-restaurants").append(resultCard)
+
+    if(picked_rest[restaurant_obj.RestID]){
+        resultCard.attr("class", "result-card picked")
+    }
+}
+
+function highlightPicked(){
+    picked_rest
 }
 
 function printRestInDecreasing(upvotes_array,allRest){
