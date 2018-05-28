@@ -1,4 +1,4 @@
-var number = 30;
+var number = 15;
 var intervalId;   
 var index1;
 var index2;
@@ -157,6 +157,7 @@ function printVotes(){
 function run() {
     clearInterval(intervalId);
     intervalId = setInterval(decrement, 1000);
+    number = 15;
 
 };
 
@@ -169,13 +170,18 @@ function decrement() {
     $("#timer").html(num);
     if (number === 0) {
         stop();
-        
+        random();
+        run();
+
+
     }
 };
 
 //function to stop the timer
 function stop() {
     clearInterval(intervalId);
+    number = 15;
+    
 };
 
 //Search form out on submit click
@@ -241,12 +247,15 @@ $("#submit-btn").on("click", function(){
     run();
 });
 
+
     
 //Tyler's upvote function
 var picked_rest = {}
 
+
 $("body").on("click", ".rest-card div", function() {
     event.preventDefault();
+   
     var restID = $(this).attr("data-restID"); // the id of restaurant that has been clicked
     console.log("restID="+restID);
     // if restID hasn't been saved into picked_rest, save and set to 1
@@ -274,8 +283,35 @@ $("body").on("click", ".rest-card div", function() {
         $("#restaurants-div").attr("class", "row noDisplay")
         printVotes();
     }
-    
+    run();
 });
+//function to pick random rest if timer has ran out.
+function random() {
+    var randomRest = Math.floor(Math.random()* 2);
+    console.log(randomRest);
+  
+
+    if (restArray.length > 2){
+        if (randomRest===0){ // if rest1 is picked
+            transitionOut("rest2");
+            index2 = printNewRestaurant("rest2",index2)    
+            console.log(index1);
+            
+        }else{  // else rest2 is picked
+            transitionOut("rest1");
+            index1 = printNewRestaurant("rest1",index1)
+           console.log(index1);
+        }
+    }else{
+        $(".rest-card").empty();
+        $("#restaurants-div").attr("class", "row noDisplay")
+        printVotes();
+        stop();
+    }   
+
+    
+}
+
 
 //retrieve the votes from firebase and store them in an object (restID: upvote) object contains the initial n restaurants
 //on the result page we display the n restaurants with their firebase votes
