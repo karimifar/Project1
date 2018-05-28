@@ -125,6 +125,12 @@ function printRestInDecreasing(upvotes_array,allRest){
     console.log(sorted_rests);
 }
 
+function Selected(){
+    for (var i = restArray.length; i > 0; i++) {
+        console.log(restArray[i].restaurant.name)
+    }
+}
+
 // print final result 
 function printVotes(){
     database.ref().once("value",function(snapshot){
@@ -247,6 +253,7 @@ var picked_rest = {}
 
 $("body").on("click", ".rest-card div", function() {
     event.preventDefault();
+    console.log(restArray);
     var restID = $(this).attr("data-restID"); // the id of restaurant that has been clicked
     console.log("restID="+restID);
     // if restID hasn't been saved into picked_rest, save and set to 1
