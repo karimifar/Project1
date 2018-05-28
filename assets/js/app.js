@@ -17,6 +17,7 @@ var database = firebase.database();
 
 var restArray = [];
 
+// print restaurant's info
 function appendRest(id,rest){
     $("#"+id).empty()
     $("#"+id).append("<img src='"+rest.Img+ "'>")
@@ -26,9 +27,9 @@ function appendRest(id,rest){
     $("#"+id).append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+rest.Cost+ "</p>")
     $("#"+id).append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+rest.Rating+ "</p>")
     $("#"+id).attr("data-restID", rest.RestID)
-    // picked_rest.push(rest.RestID);
 }
 
+// create our own restaurant object from API returned data
 function createRestObject(rest_obj){
     var result = {
         Name: rest_obj.name,
@@ -42,127 +43,116 @@ function createRestObject(rest_obj){
     return result;
 }
 
+// print two restaurants with random indexes
 function writeRest(){
-    // Need to handle the situation if no restaurant is found or less than one    
+    // Need to handle the situation if no restaurant is found or less than two    
     do{
         index1 = Math.floor(Math.random()* restArray.length)
         index2 = Math.floor(Math.random()* restArray.length)
     }while(restArray.length > 1 && index1 === index2)
 
-    var index1_rest = restArray[index1].restaurant;
-    var index2_rest = restArray[index2].restaurant;
-
-    console.log(index1_rest.name,index2_rest.name)
-
-    appendRest("rest1",createRestObject(index1_rest));
-    appendRest("rest2",createRestObject(index2_rest));
+    appendRest("rest1",allRest[index1]);
+    appendRest("rest2",allRest[index2]);
 }
 
+// print restaurant with random index
 function printNewRestaurant(divID,restID,index){
-    // remove html and restaurant from restArray
-    $("#"+divID).empty();
+    // remove restaurant from restArray
     restArray.splice(index,1);
 
+    var random_index;
     var stop = true;
     do{
-        index = Math.floor(Math.random()* restArray.length);
-        // var index_rest = restArray[index2].restaurant;
-        var restObject = createRestObject(restArray[index].restaurant);
-        if(restObject.RestID != restID){ //if we find a restaurant different from the one we pick, print it
+        var random_index = Math.floor(Math.random()* restArray.length);
+        var random_rest_id = restArray[random_index].restaurant.R.res_id;
+        if(random_rest_id != restID){ //if we find a restaurant different from the one we pick, print it and stop the while loop
+            var restObject = createRestObject(restArray[random_index].restaurant);
             appendRest(divID,restObject);
             stop = false;
-        }
-        console.log(restID+" is picked")
-        console.log("restArray.length="+restArray.length);
-        console.log("restObject.RestID="+restObject.RestID);
-        console.log("restID="+restID);
-        console.log("----------------");
 
-    }while(stop)
-    return index;
+            console.log(restID+" is picked")
+            console.log("restArray.length="+restArray.length);
+            console.log("restObject.RestID="+restObject.RestID);
+            console.log("restID="+restID);
+            console.log("----------------");
+        }
+
+    }while(stop && restArray.length > 1)
+    return random_index;
 } 
 
+// Save/update restaurant's Upvotes property
 function saveVote(restID){
     database.ref(restID).once("value",function(snapshot){
         if(snapshot.val() === null){  // if this restaurant hasn't been saved in database, set it
-            database.ref(restID).set({
-                                        RestaurantID: restID,
-                                        Upvotes: 1
-                                    });
+            database.ref(restID).set({RestaurantID: restID,Upvotes: 1});
         }else{ // else, just update the Upvotes value by one
-            console.log("snapshot.val().Upvotes="+snapshot.val().Upvotes)
             var v = snapshot.val().Upvotes + 1;
             database.ref(restID).update({Upvotes: v});
+            console.log(restID+"="+v)
         }
     })
 }
 
-$("#submit-btn").on("click", function(){
-    event.preventDefault();
-    submitAnimation();
-    var userZip = $("#zipCode").val()
-    
-    var foodType= $("#foodType").val()
-    $.ajax({
-        url: "https://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
-        method: "GET"
-    }).then(function(response){
-        console.log(response)
-    
-        var lat = response.results[0].geometry.location.lat;
-        var lng = response.results[0].geometry.location.lng;
-        console.log(lat,lng);
-        
-        var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
-        $.ajax({
-            url: queryURL,
-            method: "GET",
-        }).then(function(response) {
-            restArray= response.restaurants;
-            getAllIds();
-            console.log(restArray)
-            writeRest();
-        
-        });
-    });
-    run();
-});
-
-    
-//Tyler's upvote function
-var picked_rest = {}
-
-$("body").on("click", ".rest-card", function() {
-    event.preventDefault();
-    var restID = $(this).attr("data-restID"); // the id of restaurant that has been clicked
-
-    // if restID hasn't been saved into picked_rest, save and set to 1
-    // else increase the number of picked by one
-    picked_rest[restID] = !picked_rest[restID] ? 1 : picked_rest[restID]+1;
-    console.log("picked_rest[restID]="+picked_rest[restID])
-    console.log(picked_rest)
-
-    // save vote
-    saveVote(restID);
-
-    // print new restaurant 
-    if (restArray.length > 2){
-        var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
-        console.log(divId)
-
-        if (divId==="rest1"){ // if rest1 is picked
-            index2 = printNewRestaurant("rest2",restID,index2)    
-        }else{  // else rest2 is picked
-            index1 = printNewRestaurant("rest1",restID,index1)
-        }
-    }else{
-        //alert("out of options");
-        $(".rest-card").empty();
-        printVotes();
+// create our own restaurant objects from resturned API data and save all to allRest
+function saveRestObj(restArray){
+    for(var i=0; i<restArray.length; i++){
+        var restInfo =  createRestObject(restArray[i].restaurant);
+        allRest.push(restInfo);
     }
-    
-});
+}
+
+// print restaurant with Upvotes
+function printRestList(restaurant_obj){
+    var resultCard = $("<div class='result-card'>");
+    resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
+    resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
+    resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
+    $("#all-restaurants").append(resultCard)
+}
+
+function printRestInDecreasing(upvotes_array,allRest){
+    var sorted_rests = []
+    // upvotes_array has been sorted in increasing order
+    for(var i = upvotes_array.length-1 ; i > -1 ; i--){
+        for(var j = 0; j < allRest.length ; j++){
+            if(allRest[j].Upvotes === upvotes_array[i]){
+                sorted_rests.push(allRest[j])
+                printRestList(allRest[j]);
+            }
+        }
+    }
+    console.log(sorted_rests);
+}
+
+// print final result 
+function printVotes(){
+    database.ref().once("value",function(snapshot){
+        var upvotes_array = [];
+        var data = snapshot.val();
+
+        // save Upvotes to each restaurant object and print a list of restaurants order by their Upvotes
+        if (data !== null){
+            for(var i=0; i<allRest.length; i++){
+                var restaurantId = allRest[i].RestID; 
+
+                // If restaurant has Upvotes property, save to restaurant object, if not, save and set it to 0
+                allRest[i]["Upvotes"] = data[restaurantId]? parseInt(data[restaurantId].Upvotes) : 0;
+
+                if(upvotes_array.indexOf(allRest[i]["Upvotes"]) == -1){
+                    upvotes_array.push(parseInt(allRest[i]["Upvotes"]));
+                }                 
+            }
+
+            // sort upvotes_array by increasing order
+            upvotes_array = upvotes_array.sort(function(a, b){return a - b});
+            
+            // print restaurants (Upvotes decreasing order)
+            printRestInDecreasing(upvotes_array,allRest)
+        }
+          
+    });
+}
 
 function run() {
     clearInterval(intervalId);
@@ -188,6 +178,7 @@ function stop() {
     clearInterval(intervalId);
 };
 
+//Search form out on submit click
 function submitAnimation(){
     var tl = new TimelineMax();
     tl.to("#search-div", 0.4, {scale:1.05, transformOrigin: "50% 50%"})
@@ -196,6 +187,7 @@ function submitAnimation(){
     tl.to("#logo", 0.3, {scale: 0.6, transformOrigin: "50% 0%", ease:Power4.easeOut })
 }
 
+//opening logo animation
 function logoAnimation(){
     var tl = new TimelineMax();
     tl.fromTo("#logo", 0.3, {y:100, scale: 0.1  ,opacity:0, transformOrigin: "50% 50%", ease:Power4.easeOut},{y:100, scale: 1.3 , opacity:1, transformOrigin: "50% 50%", ease:Power4.easeOut})
@@ -206,88 +198,84 @@ function logoAnimation(){
 
 }
 
+//The flip animation when you click on each restaurant
+function transitionOut(divid){
+    var tl = new TimelineMax();
+    tl.to("#"+divid, 0.3, {rotationY:180, transformOrigin: "50% 50%", opacity:0, scale:0.5, ease:Power4.easeOut})
+    .to("#"+divid, 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1")
+}
+
+
 logoAnimation();
 
-function printR(restaurantVote,restaurantName,restaurantImage){
-    // var restaurantId = allRest[i].RestID;
-            
-    // var restaurantVote= snapshot.val()[restaurantId]? snapshot.val()[restaurantId].Upvotes : 0;
-    // var restaurantName = allRest[i].Name;
-    // var restaurantImage = allRest[i].Img;
-    console.log(restaurantVote);
-    var resultCard = $("<div class='result-card'>");
-    resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurantImage+"'></div>");
-    resultCard.append("<h2 class='result-element result-vote'>"+restaurantVote+"</h2>")
-    resultCard.append("<h2 class='result-element result-name'>"+restaurantName+"</h2>")
-    $("#all-restaurants").append(resultCard)
-}
-
-
-var firebase_result = [];
-var just_vote = [];
-var sortedID = []
-function printVotes(){
-    database.ref().once("value",function(snapshot){
-        if (snapshot.val() !== null){
-            for(var i=0; i<allRest.length; i++){
-                var restaurantId = allRest[i].RestID;        
-                var restaurantVote= snapshot.val()[restaurantId]? snapshot.val()[restaurantId].Upvotes : 0;
-                var restaurantName = allRest[i].Name;
-                var restaurantImage = allRest[i].Img;
-                firebase_result.push({
-                                        RestID:restaurantId,
-                                        Upvotes:parseInt(restaurantVote),
-                                        restaurantName: restaurantName,
-                                        restaurantImage: restaurantImage,
-                                    })
-                if(just_vote.indexOf(parseInt(restaurantVote)) == -1){
-                    just_vote.push(parseInt(restaurantVote));
-                }                 
-            }
-        }
-
+$("#submit-btn").on("click", function(){
+    event.preventDefault();
+    $("#restaurants-div").attr("class", "row")
+    submitAnimation();
+    var userZip = $("#zipCode").val()
+    
+    var foodType= $("#foodType").val()
+    $.ajax({
+        url: "https://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
+        method: "GET"
+    }).then(function(response){
+        console.log(response)
+    
+        var lat = response.results[0].geometry.location.lat;
+        var lng = response.results[0].geometry.location.lng;
+        console.log(lat,lng);
         
-        console.log(firebase_result)
-        just_vote = just_vote.sort(function(a, b){return a - b});
-        console.log(just_vote)
+        var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        $.ajax({
+            url: queryURL,
+            method: "GET",
+        }).then(function(response) {
+            restArray= response.restaurants;
+            saveRestObj(restArray);
+            console.log(restArray)
+            writeRest();
         
-        for(var i=just_vote.length-1;i>-1;i--){
-            for(var j=0;j<firebase_result.length;j++){
-                // console.log(firebase_result[j][1])
-                if(firebase_result[j].Upvotes === just_vote[i]){
-                    sortedID.push(firebase_result[j])
-                }
-            }
-        }
-
-        console.log("sortedID");
-        console.log(sortedID);
-
-        // if (snapshot.val() !== null){
-            for(var i=0; i<sortedID.length; i++){
-                // allRest.splice()
-                console.log(sortedID[i].restaurantName)
-                printR(sortedID[i].Upvotes,
-                       sortedID[i].restaurantName,
-                       sortedID[i].restaurantImage
-                      );
-            }
-        // }
-
-
-
-        
+        });
     });
-}
+    run();
+});
 
-function getAllIds(){
+    
+//Tyler's upvote function
+var picked_rest = {}
 
-    for(var i=0; i<restArray.length; i++){
-        var restInfo =  createRestObject(restArray[i].restaurant);
-        allRest.push(restInfo);
+$("body").on("click", ".rest-card div", function() {
+    event.preventDefault();
+    var restID = $(this).attr("data-restID"); // the id of restaurant that has been clicked
+    console.log("restID="+restID);
+    // if restID hasn't been saved into picked_rest, save and set to 1
+    // else increase the number of picked by one
+    picked_rest[restID] = !picked_rest[restID] ? 1 : picked_rest[restID]+1;
+    console.log(picked_rest)
+
+    // save vote
+    saveVote(restID);
+
+    // print new restaurant 
+    if (restArray.length > 2){
+        var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
+        console.log(divId)
+
+        if (divId==="rest1"){ // if rest1 is picked
+            transitionOut("rest2");
+            index2 = printNewRestaurant("rest2",restID,index2)    
+        }else{  // else rest2 is picked
+            transitionOut("rest1");
+            index1 = printNewRestaurant("rest1",restID,index1)
+        }
+    }else{
+        $(".rest-card").empty();
+        $("#restaurants-div").attr("class", "row noDisplay")
+        printVotes();
     }
-
-}
+    
+});
 
 //retrieve the votes from firebase and store them in an object (restID: upvote) object contains the initial n restaurants
 //on the result page we display the n restaurants with their firebase votes
