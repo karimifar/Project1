@@ -53,12 +53,20 @@ function writeRest(){
 
     appendRest("rest1",allRest[index1]);
     appendRest("rest2",allRest[index2]);
+    if(index1>index2){
+        restArray.splice(index1,1)
+        restArray.splice(index2,1)
+    }else{
+        index2--;
+        restArray.splice(index1,1);
+        restArray.splice(index2,1);
+    }
 }
 
 // print restaurant with random index
 function printNewRestaurant(divID,restID,index){
     // remove restaurant from restArray
-    restArray.splice(index,1);
+    // restArray.splice(index,1);
 
     var random_index;
     var stop = true;
@@ -68,6 +76,7 @@ function printNewRestaurant(divID,restID,index){
         if(random_rest_id != restID){ //if we find a restaurant different from the one we pick, print it and stop the while loop
             var restObject = createRestObject(restArray[random_index].restaurant);
             appendRest(divID,restObject);
+            restArray.splice(random_index,1);
             stop = false;
 
             console.log(restID+" is picked")
@@ -109,6 +118,14 @@ function printRestList(restaurant_obj){
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
     $("#all-restaurants").append(resultCard)
+
+    if(picked_rest[restaurant_obj.RestID]){
+        resultCard.attr("class", "result-card picked")
+    }
+}
+
+function highlightPicked(){
+    picked_rest
 }
 
 function printRestInDecreasing(upvotes_array,allRest){
@@ -267,7 +284,7 @@ $("body").on("click", ".rest-card div", function() {
     saveVote(restID);
 
     // print new restaurant 
-    if (restArray.length > 2){
+    if (restArray.length > 0){
         var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
         console.log(divId)
 
