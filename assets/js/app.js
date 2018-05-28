@@ -2,7 +2,7 @@ var number = 30;
 var intervalId;   
 var index1;
 var index2;
-
+var allRest = [];
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -120,6 +120,7 @@ $("#submit-btn").on("click", function(){
             method: "GET",
         }).then(function(response) {
             restArray= response.restaurants;
+            getAllIds();
             console.log(restArray)
             writeRest();
         
@@ -156,8 +157,9 @@ $("body").on("click", ".rest-card", function() {
             index1 = printNewRestaurant("rest1",restID,index1)
         }
     }else{
-        alert("out of options");
+        //alert("out of options");
         $(".rest-card").empty();
+        printVotes();
     }
     
 });
@@ -204,8 +206,44 @@ function logoAnimation(){
 
 }
 
-//     var name = "testName";
-//     var restID = "testRestID";
-//     var upvotes = "1";
-
 logoAnimation();
+
+function printVotes(){
+    database.ref().once("value",function(snapshot){
+        if (snapshot.val() !== null){
+            for(var i=0; i<allRest.length; i++){
+                var restaurantId = allRest[i].RestID;
+            
+                var restaurantVote= snapshot.val()[restaurantId]? snapshot.val()[restaurantId].Upvotes : 0;
+                var restaurantName = allRest[i].Name;
+                var restaurantImage = allRest[i].Img;
+
+                var resultCard = $("<div class='result-card'>");
+                resultCard.append("<img class='result-element result-img' src='"+restaurantImage+"'>");
+                resultCard.append("<h2 class='result-element result-vote'>"+restaurantVote+"</h2>")
+                resultCard.append("<h2 class='result-element result-name'>"+restaurantName+"</h2>")
+                
+
+                $("#all-restaurants").append(resultCard)
+                console.log(resultCard);
+            }
+
+        }
+        
+    });
+}
+
+function getAllIds(){
+
+    for(var i=0; i<restArray.length; i++){
+        var restInfo =  createRestObject(restArray[i].restaurant);
+        allRest.push(restInfo);
+    }
+
+}
+
+//retrieve the votes from firebase and store them in an object (restID: upvote) object contains the initial n restaurants
+//on the result page we display the n restaurants with their firebase votes
+//feature the winner restaurant
+//+ highlight the restaurants the user clicked on 
+//retry button
