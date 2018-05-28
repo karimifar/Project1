@@ -3,6 +3,9 @@ var intervalId;
 var index1;
 var index2;
 var allRest = [];
+
+
+
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -113,14 +116,20 @@ function saveRestObj(restArray){
 
 // print restaurant with Upvotes
 function printRestList(restaurant_obj){
+    // var resultlink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
+    // resultlink.append(resultCard)
     $("#all-restaurants").append(resultCard)
+    
 
     if(picked_rest[restaurant_obj.RestID]){
-        resultCard.attr("class", "result-card picked")
+        resultCard.attr("class", "result-card picked");
+        resultCard.attr("data-toggle", "tooltip" )
+        resultCard.attr("data-placement", "left" )
+        resultCard.attr("title", "You preferred this restaurant " + picked_rest[restaurant_obj.RestID] + " times" )
     }
 }
 
@@ -195,6 +204,10 @@ function stop() {
     clearInterval(intervalId);
 };
 
+$("body").on("click", "#retry-btn", function(){
+    location.reload();
+});
+
 //Search form out on submit click
 function submitAnimation(){
     var tl = new TimelineMax();
@@ -221,6 +234,21 @@ function transitionOut(divid){
     tl.to("#"+divid, 0.3, {rotationY:180, transformOrigin: "50% 50%", opacity:0, scale:0.5, ease:Power4.easeOut})
     .to("#"+divid, 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1")
 }
+
+//print featured restaurant
+function printSelected(restID){
+    console.log("winningRestID="+restID);
+    for (var i = 0; i < allRest.length; i++) {
+        if (restID == allRest[i].RestID) {
+            console.log(allRest[i].Name);
+            appendRest("featured-restaurant", allRest[i]);
+            var chosenHeaderDiv = $("<div>");
+            chosenHeaderDiv.append("<h2> You chose: </h2>");
+            chosenHeaderDiv.addClass("chosenHeaderDiv");
+            $("#featured-restaurant").prepend(chosenHeaderDiv);
+        } else {}
+    }
+ }
 
 
 logoAnimation();
@@ -289,6 +317,8 @@ $("body").on("click", ".rest-card div", function() {
     }else{
         $(".rest-card").empty();
         $("#restaurants-div").attr("class", "row noDisplay")
+        $("#retry").attr("class", "col-md-2")
+        printSelected(restID);
         printVotes();
     }
     
