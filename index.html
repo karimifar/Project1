@@ -2,51 +2,117 @@
 <html>
 <head>
     <title>Choose your restaurants</title>
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,400i,500,900" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/css/basicstyle.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/5.0.3/firebase.js"></script>
+    <!-- GSAP library -->
+    <script src="assets/js/EasePack.min.js"></script>
+    <script src="assets/js/TimelineMax.min.js"></script>
+    <script src="assets/js/TweenMax.min.js"></script>
+
+    
 </head>
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-12">
-                <h1>Let's pick a restaurant</h1>
+            <div class="col-md-4 col-sm-0"></div>
+            <div class="col-md-4 col-sm-12 header">
+                <div id="logo">
+
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            viewBox="0 0 583 138" style="enable-background:new 0 0 583 138;" xml:space="preserve">
+                    <style type="text/css">
+                        .red{fill:#F46036;}
+                        .yellow{fill:#E8C547;}
+                        .blue{fill:#1BA2E5;}
+                        .green{fill:#69B578;}
+                        .st4{fill:#1A1A1A;}
+                        .st5{fill:none;stroke:#1A1A1A;stroke-width:4.4928;stroke-miterlimit:10;}
+                        .st6{font-family:'Rubik';}
+                        .st7{font-size:74.6628px;}
+                    </style>
+                    <g id="icon">
+                        <g class"ceiling" id="red">
+                            <polygon class="ceiling red" points="298.2,56.9 276.3,56.9 288.9,31.2 303,31.2 	"/>
+                            <path class="ceiling red" d="M276.3,56.9c0,6,4.9,10.9,10.9,10.9c6,0,10.9-4.9,10.9-10.9"/>
+                        </g>
+                        <g class"ceiling" id="yellow">
+                            <polygon class="ceiling yellow" points="319.8,56.9 298.2,56.9 303,31.2 319.8,31.2 	"/>
+                            <path class="ceiling yellow" d="M298,56.9c0,6,4.9,10.9,10.9,10.9s10.9-4.9,10.9-10.9"/>
+                        </g>
+                        <g class"ceiling" id="blue">
+                            <polygon class="ceiling blue" points="319.8,56.9 341.4,56.9 334.5,31.2 319.8,31.2 	"/>
+                            <path class="ceiling blue" d="M341.5,56.9c0,6-4.9,10.9-10.9,10.9c-6,0-10.9-4.9-10.9-10.9"/>
+                        </g>
+                        <g class"ceiling" id="green">
+                            <polygon class="ceiling green" points="341.4,56.9 363.3,56.9 349.1,31.2 334.5,31.2 	"/>
+                            <path class="ceiling green" d="M341.5,56.9c0,6,4.9,10.9,10.9,10.9c6,0,10.9-4.9,10.9-10.9"/>
+                        </g>
+                        <g id="shop">
+                            <path class="st4" d="M313.5,75.4h-10.7c-1.3,0-2.3,1-2.3,2.3V96c0,1.3,1,2.3,2.3,2.3h10.7c1.3,0,2.3-1,2.3-2.3V77.7
+                                C315.9,76.4,314.8,75.4,313.5,75.4z"/>
+                            <path class="st5" d="M289.1,31.2h60c0.1,0,0.1,0,0.1,0.1L363,56.6c0.1,0.1,0,0.2-0.1,0.2h-86.3c-0.1,0-0.2-0.1-0.1-0.2l12.5-25.3
+                                C289,31.3,289,31.2,289.1,31.2z"/>
+                            <path class="st5" d="M276.3,56.9c0,6,4.9,10.9,10.9,10.9c6,0,10.9-4.9,10.9-10.9"/>
+                            <path class="st5" d="M319.7,56.9V31.2"/>
+                            <path class="st5" d="M341.4,56.9c0,6-4.9,10.9-10.9,10.9c-6,0-10.9-4.9-10.9-10.9"/>
+                            <path class="st5" d="M341.5,56.9c0,6,4.9,10.9,10.9,10.9c6,0,10.9-4.9,10.9-10.9"/>
+                            <path class="st5" d="M334.5,31.2l7,25.6"/>
+                            <path class="st5" d="M298,56.9c0,6,4.9,10.9,10.9,10.9s10.9-4.9,10.9-10.9"/>
+                            <path class="st5" d="M303,31.2l-5,25.6"/>
+                            <path class="st5" d="M354.5,66.6v29c0,1.5-1.2,2.8-2.8,2.8h-63.8c-1.5,0-2.8-1.2-2.8-2.8V66.4"/>
+                        </g>
+                    </g>
+                    <g id="text">
+                        <text transform="matrix(1 0 0 1 376.1301 98.5954)" class="st6 st7">2eat</text>
+                        <text transform="matrix(1 0 0 1 45.6168 98.5956)" class="st6 st7">Where</text>
+                    </g>
+                    </svg>
+                        
+                    
+                </div>
             </div>
+
+            <div class="col-md-4 col-sm-0"></div>
+
         </div>
 
 
-        <div class="row">
-            <div class="col-md-12">
+        <div class="row" id="search-div">
+            <div class="col-3"></div>
+            <div class="col-6">
                 <form>
-                         <div class="form-group">
+                         <div class="form-group form-el">
                             <label>Zip Code</label>
                             <input type="text" class="form-control" id="zipCode"  placeholder="78661, etc.">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group form-el">
                             <label>What kind of food do you want?</label>
                             <input type="text" class="form-control" id="foodType" placeholder="BBQ">
                         </div>
                         
-                        <button type="submit" id="submit-btn" class="btn btn-primary">Submit</button>
+                        <button type="submit" id="submit-btn" class="btn form-el">Submit</button>
                 </form>
                 <br>
-                <div class="row">
-                    
-                        <div id="rest1" class="col-md-6 rest-card"></div>
-                        <div id="rest2" class="col-md-6 rest-card"></div>
-                        
-                </div>
-                <div class="row">
-                        <div id="timer" class="col-md-1"></div>
-                </div>
-                
             </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row restaurants-div">
+                    
+                <div class="col-1"></div>
+                <div id="rest1" class="col-5 rest-card"></div>
+                <div id="rest2" class="col-5 rest-card"></div>
+                <div class="col-1"></div>
 
+        </div>
 
+        <div class="row timer">
+                <div id="timer" class="col-md-1"></div>
         </div>
             
                
