@@ -2,6 +2,7 @@ var number = 30;
 var intervalId;   
 var index1;
 var index2;
+var random = Math.floor(Math.random() * 2);
 
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
