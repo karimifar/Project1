@@ -90,34 +90,44 @@ transform: scale(0.95);
 }
 
 h2{
-    float: right;
     font-size: 20px;
 }
 .result-card{
-    height: 100px;
+    height: 120px;
     margin: 10px;
+    padding: 20px;
+    border-radius: 20px;
 }
 .result-card img{
-    min-width: 100%;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .image-div-result{
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border-radius: 30px;
+    border-radius: 50px;
     overflow: hidden;
     margin: 10px;
+    margin-top: -10px;
 }
 
 .result-card div{
     display: inline-block;
 
 }
-h2{
+
+h3{
     display: inline-block;
     margin: 10px;
-    font-size: 28px;
+    font-size: 18px;
+    float: right;
+    vertical-align: middle;
 }
 
 
@@ -129,7 +139,8 @@ h2{
 }
 
 .picked{
-    background: yellow;
+    background:rgba(232, 197, 71,0.1);
+
 }
 
 

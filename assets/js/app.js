@@ -116,20 +116,21 @@ function saveRestObj(restArray){
 
 // print restaurant with Upvotes
 function printRestList(restaurant_obj){
-    // var resultlink = $("<a href='#'></a>");
+    var resultLink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
-    resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
-    resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
-    // resultlink.append(resultCard)
-    $("#all-restaurants").append(resultCard)
+    resultCard.append("<h3 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h3>")
+    resultCard.append("<h3 class='result-element result-name'>"+restaurant_obj.Name+"</h3>")
+    resultLink.append(resultCard)
+    $("#all-restaurants").append(resultLink)
     
 
     if(picked_rest[restaurant_obj.RestID]){
         resultCard.attr("class", "result-card picked");
-        resultCard.attr("data-toggle", "tooltip" )
-        resultCard.attr("data-placement", "left" )
-        resultCard.attr("title", "You preferred this restaurant " + picked_rest[restaurant_obj.RestID] + " times" )
+        resultLink.attr("data-toggle", "tooltip" )
+        resultLink.attr("data-placement", "bottom" )
+        resultLink.attr("title", "You preferred this restaurant " + picked_rest[restaurant_obj.RestID] + " times" )
+        $('[data-toggle="tooltip"]').tooltip();
     }
 }
 
@@ -251,6 +252,7 @@ function printSelected(restID){
  }
 
 
+
 logoAnimation();
 
 $("#submit-btn").on("click", function(){
@@ -320,6 +322,8 @@ $("body").on("click", ".rest-card div", function() {
         $("#retry").attr("class", "col-md-2")
         printSelected(restID);
         printVotes();
+           
+
     }
     
 });
