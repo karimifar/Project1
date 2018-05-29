@@ -128,6 +128,14 @@ h2{
     display: none;
 }
 
+.picked{
+    background: yellow;
+}
+
+.chosenHeaderDiv {
+    float: left;
+}
+
 @media only screen and (max-width: 700px) {
     img{
         width: 100%;
@@ -146,4 +154,3 @@ h2{
     }
     
 }
-
