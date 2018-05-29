@@ -3,6 +3,9 @@ var intervalId;
 var index1;
 var index2;
 var allRest = [];
+
+
+
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -39,6 +42,8 @@ function createRestObject(rest_obj){
         Cousines : rest_obj.cuisines,
         Rating : rest_obj.user_rating.aggregate_rating,
         RestID : rest_obj.R.res_id,
+        latitude: rest_obj.location.latitude,
+        longitude: rest_obj.location.longitude
     }
     return result;
 }
@@ -53,12 +58,20 @@ function writeRest(){
 
     appendRest("rest1",allRest[index1]);
     appendRest("rest2",allRest[index2]);
+    if(index1>index2){
+        restArray.splice(index1,1)
+        restArray.splice(index2,1)
+    }else{
+        index2--;
+        restArray.splice(index1,1);
+        restArray.splice(index2,1);
+    }
 }
 
 // print restaurant with random index
 function printNewRestaurant(divID,restID,index){
     // remove restaurant from restArray
-    restArray.splice(index,1);
+    // restArray.splice(index,1);
 
     var random_index;
     var stop = true;
@@ -68,6 +81,7 @@ function printNewRestaurant(divID,restID,index){
         if(random_rest_id != restID){ //if we find a restaurant different from the one we pick, print it and stop the while loop
             var restObject = createRestObject(restArray[random_index].restaurant);
             appendRest(divID,restObject);
+            restArray.splice(random_index,1);
             stop = false;
 
             console.log(restID+" is picked")
@@ -104,11 +118,25 @@ function saveRestObj(restArray){
 
 // print restaurant with Upvotes
 function printRestList(restaurant_obj){
+    // var resultlink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
+    // resultlink.append(resultCard)
     $("#all-restaurants").append(resultCard)
+    
+
+    if(picked_rest[restaurant_obj.RestID]){
+        resultCard.attr("class", "result-card picked");
+        resultCard.attr("data-toggle", "tooltip" )
+        resultCard.attr("data-placement", "left" )
+        resultCard.attr("title", "You preferred this restaurant " + picked_rest[restaurant_obj.RestID] + " times" )
+    }
+}
+
+function highlightPicked(){
+    picked_rest
 }
 
 function printRestInDecreasing(upvotes_array,allRest){
@@ -178,6 +206,11 @@ function stop() {
     clearInterval(intervalId);
 };
 
+$("body").on("click", "#retry-btn", function(){
+    location.reload();
+});
+
+//Search form out on submit click
 function submitAnimation(){
     var tl = new TimelineMax();
     tl.to("#search-div", 0.4, {scale:1.05, transformOrigin: "50% 50%"})
@@ -186,6 +219,7 @@ function submitAnimation(){
     tl.to("#logo", 0.3, {scale: 0.6, transformOrigin: "50% 0%", ease:Power4.easeOut })
 }
 
+//opening logo animation
 function logoAnimation(){
     var tl = new TimelineMax();
     tl.fromTo("#logo", 0.3, {y:100, scale: 0.1  ,opacity:0, transformOrigin: "50% 50%", ease:Power4.easeOut},{y:100, scale: 1.3 , opacity:1, transformOrigin: "50% 50%", ease:Power4.easeOut})
@@ -196,11 +230,34 @@ function logoAnimation(){
 
 }
 
+//The flip animation when you click on each restaurant
+function transitionOut(divid){
+    var tl = new TimelineMax();
+    tl.to("#"+divid, 0.3, {rotationY:180, transformOrigin: "50% 50%", opacity:0, scale:0.5, ease:Power4.easeOut})
+    .to("#"+divid, 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1")
+}
+
+//print featured restaurant
+function printSelected(restID){
+    console.log("winningRestID="+restID);
+    for (var i = 0; i < allRest.length; i++) {
+        if (restID == allRest[i].RestID) {
+            console.log(allRest[i].Name);
+            appendRest("featured-restaurant", allRest[i]);
+            var chosenHeaderDiv = $("<div>");
+            chosenHeaderDiv.append("<h2> You chose: </h2>");
+            chosenHeaderDiv.addClass("chosenHeaderDiv");
+            $("#featured-restaurant").prepend(chosenHeaderDiv);
+        } else {}
+    }
+ }
+
 
 logoAnimation();
 
 $("#submit-btn").on("click", function(){
     event.preventDefault();
+    $("#restaurants-div").attr("class", "row")
     submitAnimation();
     var userZip = $("#zipCode").val()
     
@@ -248,18 +305,24 @@ $("body").on("click", ".rest-card div", function() {
     saveVote(restID);
 
     // print new restaurant 
-    if (restArray.length > 2){
+    if (restArray.length > 0){
         var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
         console.log(divId)
 
         if (divId==="rest1"){ // if rest1 is picked
+            transitionOut("rest2");
             index2 = printNewRestaurant("rest2",restID,index2)    
         }else{  // else rest2 is picked
+            transitionOut("rest1");
             index1 = printNewRestaurant("rest1",restID,index1)
         }
     }else{
         $(".rest-card").empty();
+        $("#restaurants-div").attr("class", "row noDisplay")
+        $("#retry").attr("class", "col-md-2")
+        printSelected(restID);
         printVotes();
+        printMap(restID);
     }
     
 });
@@ -269,3 +332,44 @@ $("body").on("click", ".rest-card div", function() {
 //feature the winner restaurant
 //+ highlight the restaurants the user clicked on 
 //retry button
+
+// map function
+
+function printMap(restID){
+    for (var i = 0; i < allRest.length; i++) {
+        if (restID == allRest[i].RestID) {
+            console.log(allRest[i].Name);
+            var mymap = L.map('mapid').setView([allRest[i].latitude, allRest[i].longitude], 12);
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox.streets',
+                accessToken: 'pk.eyJ1IjoiZ3VndWNvZGUiLCJhIjoiY2pocjU1Z3R2MWMwcjM3cHZnZDhqa3NyYyJ9.6qeZqaN1FcIHVZqSut1hgw'
+            }).addTo(mymap);
+            break;
+        } 
+    }
+
+    var redIcon = L.icon({
+        iconUrl: 'assets/images/redicon.png',
+    
+        iconSize: [30, 50],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94],
+    });
+
+    allRest.forEach(function(restaurant) {
+        var lat = restaurant.latitude;
+        var long = restaurant.longitude;
+        console.log(restaurant.RestID)
+        if(restID == restaurant.RestID){
+            console.log("print target")
+            var marker = L.marker([lat, long],  {icon: L.AwesomeMarkers.icon({icon: 'star', markerColor: 'transparent', prefix: 'fa', iconColor: 'black'}) }).addTo(mymap).bindPopup(restaurant.Name);
+        }else{
+            var marker = L.marker([lat, long]).addTo(mymap).bindPopup(restaurant.Name);
+        }
+    });
+    
+}

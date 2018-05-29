@@ -9,8 +9,9 @@
 }
 
 h1{
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1em;
+    font-size: 32px;
 }
 
 
@@ -71,7 +72,7 @@ p{
     margin-top: 30px;
 }
 
-#submit-btn{
+.custom-btn{
     width: 100px;
     margin: 10px auto;
     align-self: center;
@@ -82,7 +83,7 @@ p{
     transition: all 0.1s ease-in-out;
     padding: 10px 20px;
 }
-#submit-btn:hover{
+.custom-btn:hover{
 background-color: #69B578;
 color: white;
 transform: scale(0.95);
@@ -90,10 +91,11 @@ transform: scale(0.95);
 
 h2{
     float: right;
-    font-size: 24px;
+    font-size: 20px;
 }
 .result-card{
-    height: 100px
+    height: 100px;
+    margin: 10px;
 }
 .result-card img{
     min-width: 100%;
@@ -110,10 +112,28 @@ h2{
 
 .result-card div{
     display: inline-block;
+
 }
 h2{
     display: inline-block;
     margin: 10px;
+    font-size: 28px;
+}
+
+
+#restaurants-div{
+    margin: 0 10%;
+}
+.noDisplay{
+    display: none;
+}
+
+.picked{
+    background: yellow;
+}
+
+#mapid { 
+    height: 280px; 
 }
 
 
@@ -135,4 +155,5 @@ h2{
     }
     
 }
+
 
