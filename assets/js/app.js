@@ -1,4 +1,4 @@
-var number = 15;
+var number = 30;
 var intervalId;   
 var index1;
 var index2;
@@ -199,7 +199,7 @@ function printVotes(){
 function run() {
     clearInterval(intervalId);
     intervalId = setInterval(decrement, 1000);
-    number = 15;
+    number = 30;
 
 };
 
