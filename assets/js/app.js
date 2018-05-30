@@ -335,7 +335,42 @@ $("body").on("click", ".rest-card div", function() {
 
 // map function
 
+function printRestOnMap(mymap,restaurant,restID){
+    var lat = restaurant.latitude;
+    var long = restaurant.longitude;
+    var rest_icon;
+
+    if(restID == restaurant.RestID){
+        rest_icon = {icon: L.AwesomeMarkers.icon({icon: 'glass', markerColor: 'blue', prefix: 'fa', iconColor: 'yellow', spin: 'true'}) };
+    }else{
+        rest_icon = {icon: L.AwesomeMarkers.icon({icon: 'glass', markerColor: 'blue', prefix: 'fa', iconColor: 'white'}) }        
+    }
+
+    var detail = $("<div>");
+    var name = $("<p class='mapRestName'>"+restaurant.Name+"</p>");
+    name.css("margin","5px 0")
+    var address = $("<p class='mapLocat'>"+restaurant.Location+"</p>");
+    address.css("margin","5px 0")
+
+    // star rating html
+    var rating_star = $("<div class='star-ratings-css'>");
+    var stars = $("<div class='star-ratings-css-top'>");
+    var stars_span = "<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>";
+    // set stars tag's width by restaurant's rating
+    stars.css("width",(restaurant.Rating/5).toFixed(2)*100+"%");
+    stars.append(stars_span);
+    rating_star.append(stars)
+
+    detail.append(name,address,rating_star);
+
+    // add restaurant to map
+    L.marker([lat, long],rest_icon).addTo(mymap).bindPopup(detail.html());
+}
+
+
 function printMap(restID){
+    // create map and use the winning restaruant as center of the map
+    var mymap;
     for (var i = 0; i < allRest.length; i++) {
         if (restID == allRest[i].RestID) {
             console.log(allRest[i].Name);
@@ -350,26 +385,9 @@ function printMap(restID){
         } 
     }
 
-    var redIcon = L.icon({
-        iconUrl: 'assets/images/redicon.png',
-    
-        iconSize: [30, 50],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76],
-        shadowSize: [68, 95],
-        shadowAnchor: [22, 94],
-    });
-
+    // print out all restaurants 
     allRest.forEach(function(restaurant) {
-        var lat = restaurant.latitude;
-        var long = restaurant.longitude;
-        console.log(restaurant.RestID)
-        if(restID == restaurant.RestID){
-            console.log("print target")
-            var marker = L.marker([lat, long],  {icon: L.AwesomeMarkers.icon({icon: 'star', markerColor: 'transparent', prefix: 'fa', iconColor: 'black'}) }).addTo(mymap).bindPopup(restaurant.Name);
-        }else{
-            var marker = L.marker([lat, long]).addTo(mymap).bindPopup(restaurant.Name);
-        }
+        printRestOnMap(mymap,restaurant,restID);
     });
     
 }
