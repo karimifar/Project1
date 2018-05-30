@@ -23,14 +23,18 @@ var restArray = [];
 // print restaurant's info
 function appendRest(id,rest){
     $("#"+id).empty()
+    if (rest.Img == "") {
+        $("#"+id).append("<img src='assets/images/noimage.jpg'>")
+    } else {
     $("#"+id).append("<img src='"+rest.Img+ "'>")
+    }
     $("#"+id).append("<h1 class='rest-name'>"+rest.Name+ "</h1>")
     $("#"+id).append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+rest.Location+ "</p>")
     $("#"+id).append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+rest.Cousines+ "</p>")
     $("#"+id).append("<p class='rest-cost'>"+"<span class='title'>Average cost for two: </span>"+rest.Cost+ "</p>")
     $("#"+id).append("<p class='rest-rating'>"+"<span class='title'>Rating: </span>"+rest.Rating+ "</p>")
     $("#"+id).attr("data-restID", rest.RestID)
-}
+ }
 
 // create our own restaurant object from API returned data
 function createRestObject(rest_obj){
@@ -119,8 +123,12 @@ function printRestList(restaurant_obj){
     var resultLink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
-    resultCard.append("<h3 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h3>")
-    resultCard.append("<h3 class='result-element result-name'>"+restaurant_obj.Name+"</h3>")
+    resultCard.append("<div class='result-element result-name'><h3>"+restaurant_obj.Name+"</h3></div>")
+    resultCard.append("<div class='result-element result-vote'><h3>"+restaurant_obj.Upvotes+"</h3></div>")
+//result animation    
+    TweenMax.staggerFromTo(".result-card", 1, { y:150, opacity:0, ease:Power3.easeOut},{y:0, opacity:1, ease:Elastic.easeOut}, 0.15);
+
+
     resultLink.append(resultCard)
     $("#all-restaurants").append(resultLink)
     
@@ -173,12 +181,16 @@ function printVotes(){
 
             // sort upvotes_array by increasing order
             upvotes_array = upvotes_array.sort(function(a, b){return a - b});
-            
+            $("#all-restaurants").append("<h2 class ='result-title'>WHAT OTHER PEOPLE CHOOSE:</h2>");
+            $("#all-restaurants").append("<div class='result-head'><div class='result-head-v result-vote'><p>Votes</p></div><div class='result-head-n result-name'><p>Restaurant Name</p></div>");
+
             // print restaurants (Upvotes decreasing order)
             printRestInDecreasing(upvotes_array,allRest)
         }
           
     });
+
+    // resultAnimation();
 }
 
 function run() {
@@ -236,6 +248,22 @@ function transitionOut(divid){
     .to("#"+divid, 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1")
 }
 
+function finishGame(id){
+    var sendOut;
+    if (id==="rest1"){
+        sendOut= "rest2"
+    } else{ sendOut= "rest1"}
+    var tl = new TimelineMax();
+    tl.to("#"+sendOut, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut})
+    .to("#"+id, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut}, "=+0.15")
+    .to ("#restaurants-div", 0.2, {height:0, transformOrigin: "50% 100%"})
+    // .staggerFrom(".result-card", 1, {y:10, opacity:0, ease:Power4.easeOut}, 0.1)
+}
+// function resultAnimation(){
+//     var tl = new TimelineMax();
+//     tl.staggerFromTo(".result-card", 10, {y:10, opacity:0, ease:Power4.easeOut},{y:0, opacity:1, ease:Power4.easeOut}, 1)
+// }
+
 //print featured restaurant
 function printSelected(restID){
     console.log("winningRestID="+restID);
@@ -244,7 +272,7 @@ function printSelected(restID){
             console.log(allRest[i].Name);
             appendRest("featured-restaurant", allRest[i]);
             var chosenHeaderDiv = $("<div>");
-            chosenHeaderDiv.append("<h2> You chose: </h2>");
+            chosenHeaderDiv.append("<h2> YOU CHOSE: </h2>");
             chosenHeaderDiv.addClass("chosenHeaderDiv");
             $("#featured-restaurant").prepend(chosenHeaderDiv);
         } else {}
@@ -304,9 +332,10 @@ $("body").on("click", ".rest-card div", function() {
     // save vote
     saveVote(restID);
 
+    var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
+
     // print new restaurant 
     if (restArray.length > 0){
-        var divId= $(this).attr('id');  // the div tag id of restaurant that has been clicked
         console.log(divId)
 
         if (divId==="rest1"){ // if rest1 is picked
@@ -317,13 +346,15 @@ $("body").on("click", ".rest-card div", function() {
             index1 = printNewRestaurant("rest1",restID,index1)
         }
     }else{
-        $(".rest-card").empty();
-        $("#restaurants-div").attr("class", "row noDisplay")
+        $(".rest-card").attr("class", "col-md-6 noHover")
+        finishGame(divId);
+        // $(".rest-card").empty();
+        // $("#restaurants-div").attr("class", "row noDisplay")
         $("#retry").attr("class", "col-md-2")
         printSelected(restID);
         printVotes();
+        // resultAnimation();
            
-
     }
     
 });
