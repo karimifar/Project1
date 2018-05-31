@@ -273,6 +273,9 @@ function finishGame(id){
     tl.to("#"+sendOut, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut})
     .to("#"+id, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut}, "=+0.15")
     .to ("#restaurants-div", 0.2, {height:0, transformOrigin: "50% 100%"})
+    setTimeout(function(){
+        $("#restaurants-div").attr("class", "row noDisplay")
+    }, 950)
     // .staggerFrom(".result-card", 1, {y:10, opacity:0, ease:Power4.easeOut}, 0.1)
 }
 // function resultAnimation(){
@@ -392,7 +395,7 @@ $("body").on("click", ".rest-card div", function() {
         $(".rest-card").attr("class", "col-md-6 noHover")
         finishGame(divId);
         // $(".rest-card").empty();
-        // $("#restaurants-div").attr("class", "row noDisplay")
+        
         $("#retry").attr("class", "col-md-2")
         printVotes();
         printSelected(restID);
