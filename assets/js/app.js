@@ -122,6 +122,7 @@ function saveRestObj(restArray){
 
 // print restaurant with Upvotes
 function printRestList(restaurant_obj){
+    stop()
     var resultLink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
@@ -221,6 +222,7 @@ function decrement() {
 //function to stop the timer
 function stop() {
     clearInterval(intervalId);
+    clearTimeout();
    
     
     
