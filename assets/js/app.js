@@ -273,6 +273,9 @@ function finishGame(id){
     tl.to("#"+sendOut, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut})
     .to("#"+id, 0.3, {y:80, transformOrigin: "50% 50%", opacity:0, ease:Power4.easeOut}, "=+0.15")
     .to ("#restaurants-div", 0.2, {height:0, transformOrigin: "50% 100%"})
+    setTimeout(function(){
+        $("#restaurants-div").attr("class", "row noDisplay")
+    }, 950)
     // .staggerFrom(".result-card", 1, {y:10, opacity:0, ease:Power4.easeOut}, 0.1)
 }
 // function resultAnimation(){
@@ -340,11 +343,7 @@ $("#submit-btn").on("click", function(){
         console.log(lat,lng);
         
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-<<<<<<< HEAD
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=distance&q=" + foodType + "&apikey=" + zomatoApi
-=======
         var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=6" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
->>>>>>> 6034e877d27fce287ae5173ad0d198ed9f93965b
         $.ajax({
             url: queryURL,
             method: "GET",
@@ -396,7 +395,7 @@ $("body").on("click", ".rest-card div", function() {
         $(".rest-card").attr("class", "col-md-6 noHover")
         finishGame(divId);
         // $(".rest-card").empty();
-        // $("#restaurants-div").attr("class", "row noDisplay")
+        
         $("#retry").attr("class", "col-md-2")
         printVotes();
         printSelected(restID);
