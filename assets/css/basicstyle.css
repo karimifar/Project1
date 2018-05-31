@@ -15,7 +15,9 @@ h1{
     line-height: 1em;
     font-size: 32px;
 }
-
+.timer {
+    height: 10px;
+}
 
 /* question form */
 
