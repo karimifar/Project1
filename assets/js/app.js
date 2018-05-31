@@ -213,7 +213,7 @@ function run() {
 function decrement() {
     number--;
     var num = $("<div>")
-    num.addClass("btn btn-info")
+    num.addClass("btn btn-info timerSize")
     num.html("<h2>" + number + "</h2>")
     $("#timer").html(num);
     if (number === 0) {
