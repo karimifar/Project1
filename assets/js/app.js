@@ -303,7 +303,7 @@ $("#submit-btn").on("click", function(){
         console.log(lat,lng);
         
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=distance&q=" + foodType + "&apikey=" + zomatoApi
         $.ajax({
             url: queryURL,
             method: "GET",
