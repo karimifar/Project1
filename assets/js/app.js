@@ -3,6 +3,9 @@ var intervalId;
 var index1;
 var index2;
 var allRest = [];
+
+
+
 var config = {
     apiKey: "AIzaSyCx0d_tuVtN1E_BIl2tnZpJdP7Kve7bqLs",
     authDomain: "restaurantpicker-eb33d.firebaseapp.com",
@@ -20,7 +23,11 @@ var restArray = [];
 // print restaurant's info
 function appendRest(id,rest){
     $("#"+id).empty()
+    if (rest.Img === "") {
+        $("#"+id).append("<img src='assets/images/noimage.jpg'>") 
+    } else {
     $("#"+id).append("<img src='"+rest.Img+ "'>")
+    }
     $("#"+id).append("<h1 class='rest-name'>"+rest.Name+ "</h1>")
     $("#"+id).append("<p class='rest-location'>"+"<span class='title'>Address: </span>"+rest.Location+ "</p>")
     $("#"+id).append("<p class='rest-cousines'>"+"<span class='title'>Cousines: </span>"+rest.Cousines+ "</p>")
@@ -39,6 +46,7 @@ function createRestObject(rest_obj){
         Cousines : rest_obj.cuisines,
         Rating : rest_obj.user_rating.aggregate_rating,
         RestID : rest_obj.R.res_id,
+        URL: rest_obj.url,
     }
     return result;
 }
@@ -113,14 +121,24 @@ function saveRestObj(restArray){
 
 // print restaurant with Upvotes
 function printRestList(restaurant_obj){
+    // var resultlink = $("<a href='#'></a>");
     var resultCard = $("<div class='result-card'>");
+    if (restaurant_obj.Img === "") {
+        resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='assets/images/noimagethumb.jpg'></div>");
+    } else {
     resultCard.append("<div class='image-div-result'><img class='result-element result-img' src='"+restaurant_obj.Img+"'></div>");
+    }
     resultCard.append("<h2 class='result-element result-vote'>"+restaurant_obj.Upvotes+"</h2>")
     resultCard.append("<h2 class='result-element result-name'>"+restaurant_obj.Name+"</h2>")
+    // resultlink.append(resultCard)
     $("#all-restaurants").append(resultCard)
+    
 
     if(picked_rest[restaurant_obj.RestID]){
-        resultCard.attr("class", "result-card picked")
+        resultCard.attr("class", "result-card picked");
+        resultCard.attr("data-toggle", "tooltip" )
+        resultCard.attr("data-placement", "left" )
+        resultCard.attr("title", "You preferred this restaurant " + picked_rest[restaurant_obj.RestID] + " times" )
     }
 }
 
@@ -140,21 +158,6 @@ function printRestInDecreasing(upvotes_array,allRest){
         }
     }
     console.log(sorted_rests);
-}
-
-function printSelected(restID){
-    console.log("winningRestID="+restID);
-    $("#restaurants-div").attr("class", "row noDisplay");
-    for (var i = 0; i < allRest.length; i++) {
-        if (restID == allRest[i].RestID) {
-            console.log(allRest[i].Name);
-            appendRest("featured-restaurant", allRest[i]);
-            var chosenHeaderDiv = $("<div>");
-            chosenHeaderDiv.append("<h2> You chose: </h2>");
-            chosenHeaderDiv.addClass("chosenHeaderDiv");
-            $("#featured-restaurant").prepend(chosenHeaderDiv);
-        } else {}
-    }
 }
 
 // print final result 
@@ -210,6 +213,10 @@ function stop() {
     clearInterval(intervalId);
 };
 
+$("body").on("click", "#retry-btn", function(){
+    location.reload();
+});
+
 //Search form out on submit click
 function submitAnimation(){
     var tl = new TimelineMax();
@@ -237,12 +244,43 @@ function transitionOut(divid){
     .to("#"+divid, 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1")
 }
 
-function transitionOutFinal(divid){
-    var tl = new TimelineMax();
-    tl.to("#"+divid, 0.3, {rotationY:180, transformOrigin: "50% 50%", opacity:0, scale:0.5, ease:Power4.easeOut})
-    .to("#featured-restaurant", 0.3, {rotationY:0, transformOrigin: "50% 50%", opacity:1, scale:1, ease:Power4.easeOut}, "=+0.1");
-    // $(".rest-card").empty();
-}
+//print featured restaurant
+function printSelected(restID){
+    console.log("winningRestID="+restID);
+    for (var i = 0; i < allRest.length; i++) {
+        if (restID == allRest[i].RestID) {
+            console.log(allRest[i].Name);
+            console.log(allRest[i]);
+            console.log(allRest[i].Upvotes);
+            console.log(allRest[i]["Name"]);
+            console.log(allRest[i]["Upvotes"]);
+            appendRest("featured-restaurant", allRest[i]);
+            $("#featured-restaurant").append("<p class='rest-url'>"+"<span class='title'><a href='" + allRest[i].URL + "' target='_blank'>More Info</a></span> </p>")
+            // var selectedVotes = allRest[i].Upvotes;
+            // var selectedVotesDiv = $("<div>");
+            // selectedVotesDiv.append("Total votes: " + selectedVotes);
+            // selectedVotesDiv.addClass("selectedVotesDiv");
+            // $("#featured-restaurant").append(selectedVotesDiv);
+            var chosenHeaderDiv = $("<div>");
+            chosenHeaderDiv.append("<h2> You chose: </h2>");
+            chosenHeaderDiv.addClass("chosenHeaderDiv");
+            $("#featured-restaurant").prepend(chosenHeaderDiv);
+        } else {}
+    }
+ }
+
+//  function printSelectedVotes(restID) {
+//     for (var i = 0; i < allRest.length; i++) {
+//         if (restID == allRest[i].RestID) {
+//             console.log(allRest[i].Name);
+//             console.log(allRest[i].Upvotes);
+//             var selectedVotes = allRest[i].Upvotes;
+//             var selectedVotesDiv = $("<div>");
+//             selectedVotesDiv.append("Total votes: " + selectedVotes);
+//             selectedVotesDiv.addClass("selectedVotesDiv");
+//         } else {}
+//     }
+//  }
 
 
 logoAnimation();
@@ -265,7 +303,7 @@ $("#submit-btn").on("click", function(){
         console.log(lat,lng);
         
         var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?&lat="+ lat + "&lon=" + lng + "&count=6&sort=rating&q=" + foodType + "&apikey=" + zomatoApi
+        var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=6" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
         $.ajax({
             url: queryURL,
             method: "GET",
@@ -310,10 +348,11 @@ $("body").on("click", ".rest-card div", function() {
             index1 = printNewRestaurant("rest1",restID,index1)
         }
     }else{
-        transitionOutFinal("rest1");
-        transitionOutFinal("rest2");
-        printSelected(restID);
+        $(".rest-card").empty();
+        $("#restaurants-div").attr("class", "row noDisplay")
+        $("#retry").attr("class", "col-md-2")
         printVotes();
+        printSelected(restID);
     }
     
 });
@@ -323,3 +362,4 @@ $("body").on("click", ".rest-card div", function() {
 //feature the winner restaurant
 //+ highlight the restaurants the user clicked on 
 //retry button
+//If you use the enter key instead of clicking submit the text you entered remains on the screen

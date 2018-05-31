@@ -72,7 +72,7 @@ p{
     margin-top: 30px;
 }
 
-#submit-btn{
+.custom-btn{
     width: 100px;
     margin: 10px auto;
     align-self: center;
@@ -83,7 +83,7 @@ p{
     transition: all 0.1s ease-in-out;
     padding: 10px 20px;
 }
-#submit-btn:hover{
+.custom-btn:hover{
 background-color: #69B578;
 color: white;
 transform: scale(0.95);
