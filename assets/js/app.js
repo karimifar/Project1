@@ -325,37 +325,48 @@ function printSelected(restID){
 
 logoAnimation();
 
+
+
 $("#submit-btn").on("click", function(){
     event.preventDefault();
-    $("#restaurants-div").attr("class", "row")
-    submitAnimation();
-    var userZip = $("#zipCode").val()
     
-    var foodType= $("#foodType").val()
-    $.ajax({
-        url: "https://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
-        method: "GET"
-    }).then(function(response){
-        console.log(response)
-    
-        var lat = response.results[0].geometry.location.lat;
-        var lng = response.results[0].geometry.location.lng;
-        console.log(lat,lng);
-        
-        var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-        var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=6" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
+    var userZip = $("#zipCode").val().trim();
+    var foodType= $("#foodType").val().trim();
+    if(userZip==""){
+        $('#myModal').modal({
+          show: true})
+        //   return;
+      }else{
+
+        $("#restaurants-div").attr("class", "row")
+        submitAnimation();
         $.ajax({
-            url: queryURL,
-            method: "GET",
-        }).then(function(response) {
-            restArray= response.restaurants;
-            saveRestObj(restArray);
-            console.log(restArray)
-            writeRest();
+            url: "https://maps.googleapis.com/maps/api/geocode/json?address="+userZip,
+            method: "GET"
+        }).then(function(response){
+            console.log(response)
         
+            var lat = response.results[0].geometry.location.lat;
+            var lng = response.results[0].geometry.location.lng;
+            console.log(lat,lng);
+            
+            var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
+            var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=12" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
+            $.ajax({
+                url: queryURL,
+                method: "GET",
+            }).then(function(response) {
+                restArray= response.restaurants;
+                saveRestObj(restArray);
+                console.log(restArray)
+                writeRest();
+            
+            });
         });
-    });
-    run();
+        run();
+
+    }
+    
 });
 
 
