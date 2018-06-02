@@ -1,4 +1,4 @@
-var number = 30;
+var number = 10;
 var intervalId;   
 var index1;
 var index2;
@@ -205,7 +205,7 @@ function printVotes(){
 function run() {
     clearInterval(intervalId);
     intervalId = setInterval(decrement, 1000);
-    number = 30;
+    number = 10;
 
 };
 
@@ -351,7 +351,7 @@ $("#submit-btn").on("click", function(){
             console.log(lat,lng);
             
             var zomatoApi= "33175bea606c24db1122bc43c4dada6c"
-            var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=12" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
+            var queryURL = "https://developers.zomato.com/api/v2.1/search?q=" + foodType + "&count=8" + "&lat=" + lat + "&lon=" + lng + "&radius=3219" + "&sort=real_distance" + "&apikey=" + zomatoApi
             $.ajax({
                 url: queryURL,
                 method: "GET",
